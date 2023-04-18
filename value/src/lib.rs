@@ -18,7 +18,6 @@
 //! let mut datetime_value = Value::DateTime(DateTime::from("2023-04-05T00:00:00Z"));
 //!
 //! string_value.to_string();
-//! let number: i32 = number_value.get();
 //! number_value.get_i32();
 //! assert!(boolean_value, true);
 //! assert!(null_value, Value::Null);
