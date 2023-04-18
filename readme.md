@@ -1,6 +1,6 @@
-# :sparkles: Value Library :sparkles
+# :sparkles: Purp Value :sparkles:
 
-The Value library provides a flexible and powerful way to manipulate different types of data in your Rust projects. Whether you need to work with numbers, strings, arrays, objects, or datetime values, the Value library has you covered.
+The Purp Value provides a flexible and powerful way to manipulate different types of data in your Rust projects. Whether you need to work with numbers, strings, arrays, objects, or datetime values, the Purp Value has you covered.
 
 ## Features
 
@@ -11,7 +11,7 @@ The Value library provides a flexible and powerful way to manipulate different t
 
 ## Examples
 
-Here are some examples of how to use the Value library:
+Here are some examples of how to use the Purp Value:
 
 ```rust
 use value::{Array, DateTime, Number, Object, StringB, Value};
@@ -46,7 +46,7 @@ let datetime = DateTime::from("2023-04-05T00:00:00Z").to_value();
 ```
 
 ## Getting Started
-To start using the Value library in your Rust project, simply add the following line to your `Cargo.toml` file:
+To start using the Purp Value in your Rust project, simply add the following line to your `Cargo.toml` file:
 ```toml
 [dependencies]
 value = "0.1.0"
