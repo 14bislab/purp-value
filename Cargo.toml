@@ -1,11 +1,5 @@
 [workspace]
 members = [
-    "value",
-    "value_derive",
+    "purp_value",
+    "purp_value_derive",
 ]
-
-[package]
-name = "purp-value"
-version = "0.1.0"
-authors = ["Philippe Assis <codephilippe@gmail.com>"]
-edition = "2018"

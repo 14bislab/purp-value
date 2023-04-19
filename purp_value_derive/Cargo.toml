@@ -1,0 +1,22 @@
+[package]
+name = "purp-value-derive"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+readme = "crates-io.md"
+repository = "https://github.com/14bislab/purp-value"
+keywords = ["value", "generic", "type", "no_std", "serialization", "deserialization", "serde", "purp"]
+documentation = "https://docs.rs/purp-value"
+description = "A generic serialization/deserialization/type framework"
+categories = ["encoding", "no-std"]
+
+[dependencies]
+syn = { version = "2.0.13", features = ["full"] }
+quote = "1.0.9"
+proc-macro2 = "1.0.56"
+
+[dev-dependencies]
+purp-value = { version="1.0", path = "../purp_value" }
+
+[lib]
+proc-macro = true

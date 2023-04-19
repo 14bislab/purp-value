@@ -204,20 +204,3 @@ pub fn to_yaml_derive(input: TokenStream) -> TokenStream {
 
     TokenStream::from(expanded)
 }
-
-#[proc_macro_derive(ToXml)]
-pub fn to_xml_derive(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    let name = input.ident;
-
-    let expanded = quote! {
-        impl ToXmlTrait for #name {
-            fn to_xml(&self) -> String {
-                let value = self.to_value();
-                value.to_xml()
-            }
-        }
-    };
-
-    TokenStream::from(expanded)
-}

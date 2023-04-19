@@ -1,7 +1,7 @@
-use value_derive::{ToValueTrait, FromValueTrait, ToJsonTrait};
-use value::Value;
+use purp_value_derive::{ToValueTrait, FromValueTrait, ToJsonTrait};
+use purp_value::Value;
 
-#[derive(Debug, PartialEq, ToValueTrait, FromValueTrait, ToJsonTrait)]
+#[derive(Debug, PartialEq, ToValue, FromValue, ToJson, ToYaml)]
 struct Person {
     name: String,
     age: u32,
