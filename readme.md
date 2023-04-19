@@ -51,7 +51,7 @@ let datetime = DateTime::from("2023-04-05T00:00:00Z").to_value();
 To start using the Purp Value in your Rust project, simply add the following line to your `Cargo.toml` file:
 ```toml
 [dependencies]
-value = "0.1.0"
+value = "0.1"
 ```
 
 Then, you can import the library in your code like this:
