@@ -16,7 +16,7 @@ quote = "1.0.9"
 proc-macro2 = "1.0.56"
 
 [dev-dependencies]
-purp-value = { version="1.0", path = "../purp_value" }
+purp-value = { version="0.1", path = "../purp_value" }
 
 [lib]
 proc-macro = true
