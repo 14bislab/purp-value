@@ -15,7 +15,7 @@ The Purp Value provides a flexible and powerful way to manipulate different type
 
 Here are some examples of how to use the Purp Value:
 
-```rust
+```rust,editable
 use value::{Array, DateTime, Number, Object, StringB, Value};
 
 let string_value = Value::String(StringB::new("hello".to_string()));
@@ -36,7 +36,7 @@ datetime_value.add_days(1);
 ## Converting to Value
 You can also convert your own data types to a `Value` enum by implementing the `to_value` method. For example:
 
-```rust
+```rust,editable
 use value::{Array, DateTime, Number, Object, StringB, Value};
 
 let array = Array::from(vec![Value::Number(Number::from(1)), Value::Number(Number::from(2))]).to_value();
