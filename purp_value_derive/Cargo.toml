@@ -20,3 +20,7 @@ purp-value = { version="0.1", path = "../purp_value" }
 
 [lib]
 proc-macro = true
+
+[[example]]
+name = "derive"
+required-features = []

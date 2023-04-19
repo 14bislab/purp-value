@@ -8,7 +8,7 @@ use std::ffi::CString;
 use std::fmt::{Display, Formatter};
 use std::ops::Deref;
 
-use crate::value::TypeToValue;
+use crate::traits::ToValueTrait;
 
 /// A custom string implementation with additional manipulation methods.
 #[derive(Debug, Clone, PartialEq)]
@@ -19,7 +19,7 @@ pub struct StringB {
     pub value: String,
 }
 
-impl TypeToValue for StringB {
+impl ToValueTrait for StringB {
     fn to_value(&self) -> crate::value::Value {
         crate::value::Value::String(StringB::from(self.clone()))
     }

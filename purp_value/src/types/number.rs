@@ -5,10 +5,7 @@
 //! to set and retrieve these values safely and unsafely, as well as check their properties.
 //!
 //! The `NumberType` enum is used to identify the type of number stored in a `Number` instance.
-use crate::{
-    value::{TypeToValue, Value},
-    Error,
-};
+use crate::{traits::ToValueTrait, value::Value, Error};
 use std::fmt::Display;
 
 /// An enum representing different numeric types.
@@ -54,7 +51,7 @@ pub struct Number {
     pub f64: Option<f64>,
 }
 
-impl TypeToValue for Number {
+impl ToValueTrait for Number {
     fn to_value(&self) -> Value {
         Value::Number(self.clone())
     }
@@ -477,47 +474,6 @@ impl Number {
         self.f32 = None;
         self.f64 = None;
         self
-    }
-
-    pub fn get<T>(&self) -> Option<T>
-    where
-        T: std::convert::TryFrom<f64>
-            + std::convert::TryFrom<i128>
-            + std::convert::TryFrom<i64>
-            + std::convert::TryFrom<i32>
-            + std::convert::TryFrom<i16>
-            + std::convert::TryFrom<i8>
-            + std::convert::TryFrom<u128>
-            + std::convert::TryFrom<u64>
-            + std::convert::TryFrom<u32>
-            + std::convert::TryFrom<u16>
-            + std::convert::TryFrom<u8>,
-    {
-        if let Some(val) = self.f64 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.i128 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.i64 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.i32 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.i16 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.i8 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.u128 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.u64 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.u32 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.u16 {
-            T::try_from(val).ok()
-        } else if let Some(val) = self.u8 {
-            T::try_from(val).ok()
-        } else {
-            None
-        }
     }
 }
 

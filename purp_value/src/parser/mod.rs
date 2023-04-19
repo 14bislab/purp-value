@@ -1,4 +1,3 @@
-pub mod traits;
 use std::collections::HashMap;
 
 use pest::Parser;

@@ -38,6 +38,7 @@
 //! let datetime = DateTime::from("2023-04-05T00:00:00Z").to_value();
 //! ```
 pub mod from;
+pub mod traits;
 #[cfg(feature = "serde")]
 pub mod serde_value;
 pub mod to;

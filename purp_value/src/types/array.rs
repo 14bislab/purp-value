@@ -1,5 +1,5 @@
-use crate::{Value, Object};
-use crate::value::TypeToValue;
+use crate::traits::ToValueTrait;
+use crate::{Object, Value};
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Debug, Display, Formatter};
 
@@ -9,9 +9,9 @@ pub struct Array {
     pub values: Vec<Value>,
 }
 
-impl TypeToValue for Array {
-    fn to_value(&self) -> crate::value::Value {
-        crate::value::Value::Array(self.clone())
+impl ToValueTrait for Array {
+    fn to_value(&self) -> Value {
+        Value::Array(self.clone())
     }
 }
 

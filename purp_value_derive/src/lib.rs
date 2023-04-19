@@ -60,7 +60,7 @@ fn to_value_struct_impl(name: syn::Ident, fields: Fields) -> proc_macro2::TokenS
     quote! {
         impl ToValueTrait for #name {
             fn to_value(&self) -> Value {
-                let mut map = std::collections::HashMap::new();
+                let mut map: HashMap<String, Value>= std::collections::HashMap::new();
                 #(#field_transforms)*
                 Value::from(map)
             }
@@ -146,7 +146,10 @@ pub fn from_value_derive(input: TokenStream) -> TokenStream {
             field_names.push(field_name.clone());
             field_types.push(field_type.clone());
             from_value_exprs.push(quote! {
-                #field_name: <#field_type as FromValueTrait>::from_value(map.get(stringify!(#field_name)))?
+                #field_name: {
+                    let item = map.get(stringify!(#field_name)).unwrap().clone();
+                    <#field_type as FromValueTrait>::from_value(item).unwrap()
+                }
             });
         }
     } else {
@@ -155,11 +158,15 @@ pub fn from_value_derive(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl FromValueTrait for #struct_name {
-            fn from_value(value: &Value) -> Option<Self> {
+            type Item = Self;
+
+            fn from_value(value: Value) -> Option<Self> {
                 if let Value::Object(map) = value {
-                    Some(Self {
-                        #(#from_value_exprs),*
-                    })
+                    Some(
+                        Self {
+                            #(#from_value_exprs),*
+                        }
+                    )
                 } else {
                     None
                 }

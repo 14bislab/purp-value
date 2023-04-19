@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::types::number::NumberType;
 use crate::Value;
 use serde::ser::SerializeSeq;
