@@ -15,7 +15,7 @@ The Purp Value provides a flexible and powerful way to manipulate different type
 
 Here are some examples of how to use the Purp Value:
 
-```rust
+```rust,editable
 use value::{Array, DateTime, Number, Object, StringB, Value};
 
 let string_value = Value::String(StringB::new("hello".to_string()));
@@ -34,9 +34,10 @@ datetime_value.add_days(1);
 ```
 
 ## Converting to Value
+
 You can also convert your own data types to a `Value` enum by implementing the `to_value` method. For example:
 
-```rust
+```rust,editable
 use value::{Array, DateTime, Number, Object, StringB, Value};
 
 let array = Array::from(vec![Value::Number(Number::from(1)), Value::Number(Number::from(2))]).to_value();
@@ -48,21 +49,26 @@ let datetime = DateTime::from("2023-04-05T00:00:00Z").to_value();
 ```
 
 ## Getting Started
+
 To start using the Purp Value in your Rust project, simply add the following line to your `Cargo.toml` file:
+
 ```toml
 [dependencies]
 value = "0.1"
 ```
 
 Then, you can import the library in your code like this:
+
 ```rust
 use value::Value;
 ```
 
 ## Contributing
-If you find a bug or have a suggestion for a new feature, please open an issue on the [GitHub repository](/issues).
+
+If you find a bug or have a suggestion for a new feature, please open an issue on the [GitHub repository](https://github.com/14bislab/purp-value/issues).
 
 If you would like to contribute to the project, please feel free to submit a pull request. Before submitting a pull request, please make sure that your code adheres to the project's style guidelines and passes all tests.
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE-APACHE](/blob/main/LICENSE-APACHE) or [LICENSE-MIT](/blob/main/LICENSE-MIT) file for more information.
+
+This project is licensed under the MIT License. See the [LICENSE-APACHE](https://github.com/14bislab/purp-value/blob/main/LICENSE-APACHE) or [LICENSE-MIT](https://github.com/14bislab/purp-value/blob/main/LICENSE-MIT) file for more information.
