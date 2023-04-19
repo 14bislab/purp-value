@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use purp_value::traits::{FromValueTrait, ToJsonTrait, ToValueTrait, ToYamlTrait};
+use purp_value::traits::{FromValueBehavior, ToJsonBehavior, ToValueBehavior, ToYamlBehavior};
 use purp_value::Value;
 use purp_value_derive::{FromValue, ToJson, ToValue, ToYaml};
 

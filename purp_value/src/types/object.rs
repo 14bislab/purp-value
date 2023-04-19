@@ -1,4 +1,4 @@
-use crate::traits::ToValueTrait;
+use crate::traits::ToValueBehavior;
 use crate::Value;
 use std::collections::{BTreeMap, HashMap};
 use std::iter::Iterator;
@@ -91,7 +91,7 @@ impl Default for Object {
     }
 }
 
-impl ToValueTrait for Object {
+impl ToValueBehavior for Object {
     /// Converts Object into a Value enum.
     fn to_value(&self) -> Value {
         Value::Object(self.clone())

@@ -12,7 +12,7 @@ pub fn to_value_derive(input: TokenStream) -> TokenStream {
     let to_value_impl = match input.data {
         Data::Struct(data) => to_value_struct_impl(name, data.fields),
         Data::Enum(data) => to_value_enum_impl(name, data.variants),
-        Data::Union(_) => panic!("ToValueTrait cannot be derived for unions"),
+        Data::Union(_) => panic!("ToValueBehavior cannot be derived for unions"),
     };
 
     let expanded = quote! {
@@ -48,7 +48,7 @@ fn to_value_struct_impl(name: syn::Ident, fields: Fields) -> proc_macro2::TokenS
             .collect::<Vec<_>>(),
         Fields::Unit => {
             return quote! {
-                impl ToValueTrait for #name {
+                impl ToValueBehavior for #name {
                     fn to_value(&self) -> Value {
                         Value::Null
                     }
@@ -58,7 +58,7 @@ fn to_value_struct_impl(name: syn::Ident, fields: Fields) -> proc_macro2::TokenS
     };
 
     quote! {
-        impl ToValueTrait for #name {
+        impl ToValueBehavior for #name {
             fn to_value(&self) -> Value {
                 let mut map: HashMap<String, Value>= std::collections::HashMap::new();
                 #(#field_transforms)*
@@ -93,7 +93,7 @@ fn to_value_enum_impl(
                 .map(|(index, _field)| {
                     let index = syn::Index::from(index);
                     quote! {
-                        <_ as ToValueTrait>::to_value(&self.#index)
+                        <_ as ToValueBehavior>::to_value(&self.#index)
                     }
                 })
                 .collect::<Vec<_>>(),
@@ -113,7 +113,7 @@ fn to_value_enum_impl(
     });
 
     quote! {
-        impl ToValueTrait for #name {
+        impl ToValueBehavior for #name {
             fn to_value(&self) -> Value {
                 match self {
                     #(#variant_transforms)*
@@ -132,10 +132,10 @@ pub fn from_value_derive(input: TokenStream) -> TokenStream {
     let struct_name = &ast.ident;
     let struct_fields = match ast.data {
         Data::Struct(data_struct) => data_struct.fields,
-        _ => panic!("Can only derive FromValueTrait for a struct."),
+        _ => panic!("Can only derive FromValueBehavior for a struct."),
     };
 
-    // Define a new implementation of the `FromValueTrait` trait for the struct.
+    // Define a new implementation of the `FromValueBehavior` trait for the struct.
     let mut field_names = Vec::new();
     let mut field_types = Vec::new();
     let mut from_value_exprs = Vec::new();
@@ -148,16 +148,16 @@ pub fn from_value_derive(input: TokenStream) -> TokenStream {
             from_value_exprs.push(quote! {
                 #field_name: {
                     let item = map.get(stringify!(#field_name)).unwrap().clone();
-                    <#field_type as FromValueTrait>::from_value(item).unwrap()
+                    <#field_type as FromValueBehavior>::from_value(item).unwrap()
                 }
             });
         }
     } else {
-        panic!("Can only derive FromValueTrait for a struct with named fields.");
+        panic!("Can only derive FromValueBehavior for a struct with named fields.");
     }
 
     let expanded = quote! {
-        impl FromValueTrait for #struct_name {
+        impl FromValueBehavior for #struct_name {
             type Item = Self;
 
             fn from_value(value: Value) -> Option<Self> {
@@ -184,7 +184,7 @@ pub fn to_json_derive(input: TokenStream) -> TokenStream {
     let name = &ast.ident;
 
     let gen = quote! {
-        impl ToJsonTrait for #name {
+        impl ToJsonBehavior for #name {
             fn to_json(&self) -> String {
                 self.to_value().to_string()
             }
@@ -201,7 +201,7 @@ pub fn to_yaml_derive(input: TokenStream) -> TokenStream {
     let name = input.ident;
 
     let expanded = quote! {
-        impl ToYamlTrait for #name {
+        impl ToYamlBehavior for #name {
             fn to_yaml(&self) -> String {
                 let value = self.to_value();
                 value.to_yaml()

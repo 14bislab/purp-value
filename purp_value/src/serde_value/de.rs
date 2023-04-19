@@ -1,4 +1,4 @@
-use crate::{traits::ToValueTrait, Array, Object};
+use crate::{traits::ToValueBehavior, Array, Object};
 use serde::Deserializer;
 use std::collections::HashMap;
 use std::fmt;

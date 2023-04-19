@@ -1,4 +1,4 @@
-use crate::traits::ToValueTrait;
+use crate::traits::ToValueBehavior;
 use crate::{Object, Value};
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Debug, Display, Formatter};
@@ -9,7 +9,7 @@ pub struct Array {
     pub values: Vec<Value>,
 }
 
-impl ToValueTrait for Array {
+impl ToValueBehavior for Array {
     fn to_value(&self) -> Value {
         Value::Array(self.clone())
     }

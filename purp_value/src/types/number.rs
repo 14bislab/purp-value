@@ -5,7 +5,7 @@
 //! to set and retrieve these values safely and unsafely, as well as check their properties.
 //!
 //! The `NumberType` enum is used to identify the type of number stored in a `Number` instance.
-use crate::{traits::ToValueTrait, value::Value, Error};
+use crate::{traits::ToValueBehavior, value::Value, Error};
 use std::fmt::Display;
 
 /// An enum representing different numeric types.
@@ -51,7 +51,7 @@ pub struct Number {
     pub f64: Option<f64>,
 }
 
-impl ToValueTrait for Number {
+impl ToValueBehavior for Number {
     fn to_value(&self) -> Value {
         Value::Number(self.clone())
     }

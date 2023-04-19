@@ -1,5 +1,5 @@
 //! This module provides a `Value` enum to represent different data types and
-//! a trait `ToValueTrait` to convert them to `Value`. The supported data types
+//! a trait `ToValueBehavior` to convert them to `Value`. The supported data types
 //! are: String, Number, Boolean, Array, Object, Null, Undefined, and DateTime.
 //!
 //! # Examples
@@ -14,7 +14,7 @@
 //! let undefined_value = Value::Undefined;
 //! let mut datetime_value = Value::DateTime(DateTime::from("2023-04-05T00:00:00Z"));
 //! ```
-use crate::traits::ToValueTrait;
+use crate::traits::ToValueBehavior;
 use crate::to::json::JsonMode;
 use crate::{Array, DateTime, Number, Object, StringB};
 use std::collections::{BTreeMap, HashMap};
@@ -43,87 +43,87 @@ impl Default for Value {
 
 impl ValueTrait for Value {}
 
-impl ToValueTrait for u8 {
+impl ToValueBehavior for u8 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for u16 {
+impl ToValueBehavior for u16 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for u32 {
+impl ToValueBehavior for u32 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for u64 {
+impl ToValueBehavior for u64 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for i8 {
+impl ToValueBehavior for i8 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for i16 {
+impl ToValueBehavior for i16 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for i32 {
+impl ToValueBehavior for i32 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for i64 {
+impl ToValueBehavior for i64 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for f32 {
+impl ToValueBehavior for f32 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for f64 {
+impl ToValueBehavior for f64 {
     fn to_value(&self) -> Value {
         Value::Number(Number::from(*self))
     }
 }
 
-impl ToValueTrait for String {
+impl ToValueBehavior for String {
     fn to_value(&self) -> Value {
         Value::String(StringB::new(self.clone()))
     }
 }
 
-impl ToValueTrait for &str {
+impl ToValueBehavior for &str {
     fn to_value(&self) -> Value {
         Value::String(StringB::new(self.to_string()))
     }
 }
 
-impl ToValueTrait for bool {
+impl ToValueBehavior for bool {
     fn to_value(&self) -> Value {
         Value::Boolean(*self)
     }
 }
 
-impl<T> ToValueTrait for BTreeMap<String, T>
+impl<T> ToValueBehavior for BTreeMap<String, T>
 where
-    T: ToValueTrait,
+    T: ToValueBehavior,
 {
     fn to_value(&self) -> Value {
         let mut object = Object::default();
@@ -134,9 +134,9 @@ where
     }
 }
 
-impl<T> ToValueTrait for HashMap<String, T>
+impl<T> ToValueBehavior for HashMap<String, T>
 where
-    T: ToValueTrait,
+    T: ToValueBehavior,
 {
     fn to_value(&self) -> Value {
         let mut object = Object::default();
@@ -147,9 +147,9 @@ where
     }
 }
 
-impl<T> ToValueTrait for Vec<T>
+impl<T> ToValueBehavior for Vec<T>
 where
-    T: ToValueTrait,
+    T: ToValueBehavior,
 {
     fn to_value(&self) -> Value {
         let mut array = Array::new();
@@ -160,9 +160,9 @@ where
     }
 }
 
-impl<T> ToValueTrait for Option<T>
+impl<T> ToValueBehavior for Option<T>
 where
-    T: ToValueTrait,
+    T: ToValueBehavior,
 {
     fn to_value(&self) -> Value {
         match self {
@@ -195,26 +195,26 @@ impl From<()> for Value {
 
 impl<T> From<T> for Value
 where
-    T: ToValueTrait,
+    T: ToValueBehavior,
 {
     fn from(value: T) -> Self {
         value.to_value()
     }
 }
 
-impl ToValueTrait for HashMap<String, Value> {
+impl ToValueBehavior for HashMap<String, Value> {
     fn to_value(&self) -> Value {
         Object::HashMap(self.clone()).to_value()
     }
 }
 
-impl ToValueTrait for BTreeMap<String, Value> {
+impl ToValueBehavior for BTreeMap<String, Value> {
     fn to_value(&self) -> Value {
         Object::BTreeMap(self.clone()).to_value()
     }
 }
 
-impl ToValueTrait for Vec<Value> {
+impl ToValueBehavior for Vec<Value> {
     fn to_value(&self) -> Value {
         Array::from(self.clone()).to_value()
     }

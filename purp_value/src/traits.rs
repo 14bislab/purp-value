@@ -2,18 +2,18 @@ use crate::Value;
 use std::collections::{BTreeMap, HashMap};
 
 /// A trait for converting types to `Value`.
-pub trait ToValueTrait {
+pub trait ToValueBehavior {
     /// Converts a type into a `Value`.
     fn to_value(&self) -> Value;
 }
 /// A trait for converting `Value` to types.
-pub trait FromValueTrait {
+pub trait FromValueBehavior {
     type Item;
     /// Converts a `Value` into a type.
     fn from_value(value: Value) -> Option<Self::Item>;
 }
 
-impl FromValueTrait for i8 {
+impl FromValueBehavior for i8 {
     type Item = i8;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -25,7 +25,7 @@ impl FromValueTrait for i8 {
     }
 }
 
-impl FromValueTrait for i16 {
+impl FromValueBehavior for i16 {
     type Item = i16;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -37,7 +37,7 @@ impl FromValueTrait for i16 {
     }
 }
 
-impl FromValueTrait for i32 {
+impl FromValueBehavior for i32 {
     type Item = i32;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -49,7 +49,7 @@ impl FromValueTrait for i32 {
     }
 }
 
-impl FromValueTrait for i64 {
+impl FromValueBehavior for i64 {
     type Item = i64;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -61,7 +61,7 @@ impl FromValueTrait for i64 {
     }
 }
 
-impl FromValueTrait for i128 {
+impl FromValueBehavior for i128 {
     type Item = i128;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -73,7 +73,7 @@ impl FromValueTrait for i128 {
     }
 }
 
-impl FromValueTrait for u8 {
+impl FromValueBehavior for u8 {
     type Item = u8;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -85,7 +85,7 @@ impl FromValueTrait for u8 {
     }
 }
 
-impl FromValueTrait for u16 {
+impl FromValueBehavior for u16 {
     type Item = u16;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -97,7 +97,7 @@ impl FromValueTrait for u16 {
     }
 }
 
-impl FromValueTrait for u32 {
+impl FromValueBehavior for u32 {
     type Item = u32;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -109,7 +109,7 @@ impl FromValueTrait for u32 {
     }
 }
 
-impl FromValueTrait for u64 {
+impl FromValueBehavior for u64 {
     type Item = u64;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -121,7 +121,7 @@ impl FromValueTrait for u64 {
     }
 }
 
-impl FromValueTrait for u128 {
+impl FromValueBehavior for u128 {
     type Item = u128;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -133,7 +133,7 @@ impl FromValueTrait for u128 {
     }
 }
 
-impl FromValueTrait for f32 {
+impl FromValueBehavior for f32 {
     type Item = f32;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -145,7 +145,7 @@ impl FromValueTrait for f32 {
     }
 }
 
-impl FromValueTrait for f64 {
+impl FromValueBehavior for f64 {
     type Item = f64;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -157,7 +157,7 @@ impl FromValueTrait for f64 {
     }
 }
 
-impl FromValueTrait for String {
+impl FromValueBehavior for String {
     type Item = String;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -169,7 +169,7 @@ impl FromValueTrait for String {
     }
 }
 
-impl FromValueTrait for bool {
+impl FromValueBehavior for bool {
     type Item = bool;
 
     fn from_value(value: Value) -> Option<Self::Item> {
@@ -181,11 +181,11 @@ impl FromValueTrait for bool {
     }
 }
 
-impl<T> FromValueTrait for Vec<T>
+impl<T> FromValueBehavior for Vec<T>
 where
-    T: FromValueTrait,
+    T: FromValueBehavior,
 {
-    type Item = Vec<<T as FromValueTrait>::Item>;
+    type Item = Vec<<T as FromValueBehavior>::Item>;
 
     fn from_value(value: Value) -> Option<Self::Item> {
         if let Value::Array(array) = value {
@@ -201,11 +201,11 @@ where
     }
 }
 
-impl<T> FromValueTrait for HashMap<String, T>
+impl<T> FromValueBehavior for HashMap<String, T>
 where
-    T: FromValueTrait,
+    T: FromValueBehavior,
 {
-    type Item = HashMap<String, <T as FromValueTrait>::Item>;
+    type Item = HashMap<String, <T as FromValueBehavior>::Item>;
 
     fn from_value(value: Value) -> Option<Self::Item> {
         if let Value::Object(array) = value {
@@ -219,11 +219,11 @@ where
     }
 }
 
-impl<T> FromValueTrait for BTreeMap<String, T>
+impl<T> FromValueBehavior for BTreeMap<String, T>
 where
-    T: FromValueTrait,
+    T: FromValueBehavior,
 {
-    type Item = BTreeMap<String, <T as FromValueTrait>::Item>;
+    type Item = BTreeMap<String, <T as FromValueBehavior>::Item>;
 
     fn from_value(value: Value) -> Option<Self::Item> {
         if let Value::Object(array) = value {
@@ -237,11 +237,11 @@ where
     }
 }
 
-impl<T> FromValueTrait for Option<T>
+impl<T> FromValueBehavior for Option<T>
 where
-    T: FromValueTrait,
+    T: FromValueBehavior,
 {
-    type Item = Option<<T as FromValueTrait>::Item>;
+    type Item = Option<<T as FromValueBehavior>::Item>;
 
     fn from_value(value: Value) -> Option<Self::Item> {
         match value {
@@ -253,19 +253,19 @@ where
 
 
 /// A trait for converting types to JSON strings.
-pub trait ToJsonTrait {
+pub trait ToJsonBehavior {
     /// Converts a type into a JSON string.
     fn to_json(&self) -> String;
 }
 
 /// A trait for converting types to YAML strings.
-pub trait ToYamlTrait {
+pub trait ToYamlBehavior {
     /// Converts a type into a YAML string.
     fn to_yaml(&self) -> String;
 }
 
 /// A trait for converting types to XML strings.
-pub trait ToXmlTrait {
+pub trait ToXmlBehavior {
     /// Converts a type into an XML string.
     fn to_xml(&self) -> String;
 }
