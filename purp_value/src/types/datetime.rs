@@ -3,6 +3,37 @@ use chrono::{
 };
 use std::fmt::{Display, Formatter};
 
+pub trait DateTimeBehavior {
+    fn as_date(&self) -> Option<&NaiveDate>;
+    fn as_time(&self) -> Option<&NaiveTime>;
+    fn as_date_time(&self) -> Option<&ChDateTime<chrono::Utc>>;
+
+    // DateTime methods for accessing specific components of date or time values
+    fn year(&self) -> Option<i32>;
+    fn month(&self) -> Option<u32>;
+    fn day(&self) -> Option<u32>;
+    fn hour(&self) -> Option<u32>;
+    fn minute(&self) -> Option<u32>;
+    fn second(&self) -> Option<u32>;
+    fn timestamp(&self) -> Option<i64>;
+    fn timezone(&self) -> Option<Utc>;
+
+    // Methods for formatting DateTime values as strings
+    fn to_iso8601(&self) -> String;
+    fn to_rfc3339(&self) -> String;
+
+    // Methods for adding or subtracting a Duration to/from a DateTime value
+    fn add_duration(&self, duration: Duration) -> Option<Self>
+    where
+        Self: Sized;
+    fn subtract_duration(&self, duration: Duration) -> Option<Self>
+    where
+        Self: Sized;
+
+    // Method for calculating the duration between two DateTime values
+    fn duration_between(&self, other: &Self) -> Option<Duration>;
+}
+
 /// Enum representing a date, time, or date-time value.
 ///
 /// # Variants
@@ -83,30 +114,29 @@ impl Display for DateTime {
 }
 
 // DateTime methods for accessing underlying NaiveDate, NaiveTime, or ChDateTime<Utc> values
-impl DateTime {
-    pub fn as_date(&self) -> Option<&NaiveDate> {
+impl DateTimeBehavior for DateTime {
+    fn as_date(&self) -> Option<&NaiveDate> {
         match self {
             DateTime::Date(value) => Some(value),
             _ => None,
         }
     }
 
-    pub fn as_time(&self) -> Option<&NaiveTime> {
+    fn as_time(&self) -> Option<&NaiveTime> {
         match self {
             DateTime::Time(value) => Some(value),
             _ => None,
         }
     }
 
-    pub fn as_date_time(&self) -> Option<&ChDateTime<chrono::Utc>> {
+    fn as_date_time(&self) -> Option<&ChDateTime<chrono::Utc>> {
         match self {
             DateTime::DateTime(value) => Some(value),
             _ => None,
         }
     }
 
-    // DateTime methods for accessing specific components of date or time values
-    pub fn year(&self) -> Option<i32> {
+    fn year(&self) -> Option<i32> {
         match self {
             DateTime::Date(date) => Some(date.year()),
             DateTime::DateTime(datetime) => Some(datetime.year()),
@@ -114,7 +144,7 @@ impl DateTime {
         }
     }
 
-    pub fn month(&self) -> Option<u32> {
+    fn month(&self) -> Option<u32> {
         match self {
             DateTime::Date(date) => Some(date.month()),
             DateTime::DateTime(datetime) => Some(datetime.month()),
@@ -122,7 +152,7 @@ impl DateTime {
         }
     }
 
-    pub fn day(&self) -> Option<u32> {
+    fn day(&self) -> Option<u32> {
         match self {
             DateTime::Date(date) => Some(date.day()),
             DateTime::DateTime(datetime) => Some(datetime.day()),
@@ -130,7 +160,7 @@ impl DateTime {
         }
     }
 
-    pub fn hour(&self) -> Option<u32> {
+    fn hour(&self) -> Option<u32> {
         match self {
             DateTime::Time(time) => Some(time.hour()),
             DateTime::DateTime(datetime) => Some(datetime.hour()),
@@ -138,7 +168,7 @@ impl DateTime {
         }
     }
 
-    pub fn minute(&self) -> Option<u32> {
+    fn minute(&self) -> Option<u32> {
         match self {
             DateTime::Time(time) => Some(time.minute()),
             DateTime::DateTime(datetime) => Some(datetime.minute()),
@@ -146,7 +176,7 @@ impl DateTime {
         }
     }
 
-    pub fn second(&self) -> Option<u32> {
+    fn second(&self) -> Option<u32> {
         match self {
             DateTime::Time(time) => Some(time.second()),
             DateTime::DateTime(datetime) => Some(datetime.second()),
@@ -154,22 +184,21 @@ impl DateTime {
         }
     }
 
-    pub fn timestamp(&self) -> Option<i64> {
+    fn timestamp(&self) -> Option<i64> {
         match self {
             DateTime::DateTime(datetime) => Some(datetime.timestamp()),
             _ => None,
         }
     }
 
-    pub fn timezone(&self) -> Option<Utc> {
+    fn timezone(&self) -> Option<Utc> {
         match self {
             DateTime::DateTime(_) => Some(Utc),
             _ => None,
         }
     }
 
-    // Methods for formatting DateTime values as strings
-    pub fn to_iso8601(&self) -> String {
+    fn to_iso8601(&self) -> String {
         match self {
             DateTime::Date(date) => date.format("%Y-%m-%d").to_string(),
             DateTime::Time(time) => time.format("%H:%M:%S%.f").to_string(),
@@ -177,15 +206,14 @@ impl DateTime {
         }
     }
 
-    pub fn to_rfc3339(&self) -> String {
+    fn to_rfc3339(&self) -> String {
         match self {
             DateTime::DateTime(datetime) => datetime.to_rfc3339(),
             _ => "".to_string(),
         }
     }
 
-    // Methods for adding or subtracting a Duration to/from a DateTime value
-    pub fn add_duration(&self, duration: Duration) -> Option<Self> {
+    fn add_duration(&self, duration: Duration) -> Option<Self> {
         match self {
             DateTime::Date(date) => Some(DateTime::Date(
                 *date + chrono::Duration::days(duration.num_days()),
@@ -195,7 +223,7 @@ impl DateTime {
         }
     }
 
-    pub fn subtract_duration(&self, duration: Duration) -> Option<Self> {
+    fn subtract_duration(&self, duration: Duration) -> Option<Self> {
         match self {
             DateTime::Date(date) => Some(DateTime::Date(
                 *date - chrono::Duration::days(duration.num_days()),
@@ -205,8 +233,7 @@ impl DateTime {
         }
     }
 
-    // Method for calculating the duration between two DateTime values
-    pub fn duration_between(&self, other: &DateTime) -> Option<Duration> {
+    fn duration_between(&self, other: &DateTime) -> Option<Duration> {
         match (self, other) {
             (DateTime::Date(date1), DateTime::Date(date2)) => {
                 Some(Duration::days((*date2 - *date1).num_days()))
@@ -219,7 +246,7 @@ impl DateTime {
 
 #[cfg(test)]
 mod tests {
-    use super::DateTime;
+    use crate::prelude::*;
     use chrono::{Duration, NaiveDate, TimeZone, Utc};
 
     #[test]
