@@ -2,6 +2,35 @@ use crate::prelude::*;
 use std::collections::{BTreeMap, HashMap};
 use std::iter::Iterator;
 
+pub trait ObjectBehavior {
+    /// Returns a reference to the value associated with the specified key, or `None` if the key is not present.
+    fn get(&self, key: &str) -> Option<&Value>;
+
+    /// Inserts a key-value pair into the object. If the key already exists, returns the previous value associated with the key.
+    fn insert(&mut self, key: String, value: Value) -> Option<Value>;
+
+    /// Removes a key-value pair from the object and returns the associated value. If the key is not present, returns `None`.
+    fn remove(&mut self, key: &str) -> Option<Value>;
+
+    /// Returns `true` if the object contains a value for the specified key, otherwise `false`.
+    fn contains_key(&self, key: &str) -> bool;
+
+    /// Returns a `Vec` of references to the keys in the object, in the order they were inserted.
+    fn keys(&self) -> Vec<&String>;
+
+    /// Returns a `Vec` of references to the values in the object, in the order they were inserted.
+    fn values(&self) -> Vec<&Value>;
+
+    /// Returns the number of key-value pairs in the object.
+    fn len(&self) -> usize;
+
+    /// Returns `true` if the object contains no key-value pairs, otherwise `false`.
+    fn is_empty(&self) -> bool;
+
+    /// Removes all key-value pairs from the object.
+    fn clear(&mut self);
+}
+
 /// An enum representing a JSON object as a `BTreeMap` or a `HashMap`.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Object {
@@ -9,73 +38,64 @@ pub enum Object {
     HashMap(HashMap<String, Value>),
 }
 
-impl Object {
-    /// Returns a reference to the value associated with the specified key, or `None` if the key is not present.
-    pub fn get(&self, key: &str) -> Option<&Value> {
+impl ObjectBehavior for Object {
+    fn get(&self, key: &str) -> Option<&Value> {
         match self {
             Object::BTreeMap(map) => map.get(key),
             Object::HashMap(map) => map.get(key),
         }
     }
 
-    /// Inserts a key-value pair into the object. If the key already exists, returns the previous value associated with the key.
-    pub fn insert(&mut self, key: String, value: Value) -> Option<Value> {
+    fn insert(&mut self, key: String, value: Value) -> Option<Value> {
         match self {
             Object::BTreeMap(map) => map.insert(key, value),
             Object::HashMap(map) => map.insert(key, value),
         }
     }
 
-    /// Removes a key-value pair from the object and returns the associated value. If the key is not present, returns `None`.
-    pub fn remove(&mut self, key: &str) -> Option<Value> {
+    fn remove(&mut self, key: &str) -> Option<Value> {
         match self {
             Object::BTreeMap(map) => map.remove(key),
             Object::HashMap(map) => map.remove(key),
         }
     }
 
-    /// Returns `true` if the object contains a value for the specified key, otherwise `false`.
-    pub fn contains_key(&self, key: &str) -> bool {
+    fn contains_key(&self, key: &str) -> bool {
         match self {
             Object::BTreeMap(map) => map.contains_key(key),
             Object::HashMap(map) => map.contains_key(key),
         }
     }
 
-    /// Returns a `Vec` of references to the keys in the object, in the order they were inserted.
-    pub fn keys(&self) -> Vec<&String> {
+    fn keys(&self) -> Vec<&String> {
         match self {
             Object::BTreeMap(map) => map.keys().collect(),
             Object::HashMap(map) => map.keys().collect(),
         }
     }
 
-    /// Returns a `Vec` of references to the values in the object, in the order they were inserted.
-    pub fn values(&self) -> Vec<&Value> {
+    fn values(&self) -> Vec<&Value> {
         match self {
             Object::BTreeMap(map) => map.values().collect(),
             Object::HashMap(map) => map.values().collect(),
         }
     }
 
-    /// Returns the number of key-value pairs in the object.
-    pub fn len(&self) -> usize {
+    fn len(&self) -> usize {
         match self {
             Object::BTreeMap(map) => map.len(),
             Object::HashMap(map) => map.len(),
         }
     }
 
-    /// Returns `true` if the object contains no key-value pairs, otherwise `false`.
-    pub fn is_empty(&self) -> bool {
+    fn is_empty(&self) -> bool {
         match self {
             Object::BTreeMap(map) => map.is_empty(),
             Object::HashMap(map) => map.is_empty(),
         }
     }
 
-    /// Removes all key-value pairs from the object.
-    pub fn clear(&mut self) {
+    fn clear(&mut self) {
         match self {
             Object::BTreeMap(map) => map.clear(),
             Object::HashMap(map) => map.clear(),
@@ -179,8 +199,8 @@ impl<'a> Object {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::*;
     use super::*;
+    use crate::prelude::*;
 
     #[test]
     fn test_object_iter() {

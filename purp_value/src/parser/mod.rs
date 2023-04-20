@@ -70,7 +70,6 @@ impl Value {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::*;
     use super::*;
 
     #[test]
