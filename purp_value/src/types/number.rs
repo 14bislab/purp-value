@@ -195,22 +195,6 @@ pub trait NumberBehavior {
     /// assert_eq!(num.number_type(), NumberType::U32);
     /// ```
     fn number_type(&self) -> NumberType;
-
-    /// Empties the `Number` struct by removing any stored value.
-    ///
-    /// # Returns
-    ///
-    /// A mutable reference to the `Number` struct after removing any stored value.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_u64(42);
-    /// num.empty();
-    /// assert_eq!(num.is_number(), false);
-    /// ```
-    fn empty(&mut self) -> &mut Self;
 }
 
 /// An enum representing different numeric types.
@@ -254,6 +238,38 @@ pub struct Number {
     pub i128: Option<i128>,
     pub f32: Option<f32>,
     pub f64: Option<f64>,
+}
+
+impl Number {
+    /// Empties the `Number` struct by removing any stored value.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to the `Number` struct after removing any stored value.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_u64(42);
+    /// num.clean();
+    /// assert_eq!(num.is_number(), false);
+    /// ```
+    fn clean(&mut self) -> &mut Self {
+        self.u8 = None;
+        self.u16 = None;
+        self.u32 = None;
+        self.u64 = None;
+        self.u128 = None;
+        self.i8 = None;
+        self.i16 = None;
+        self.i32 = None;
+        self.i64 = None;
+        self.i128 = None;
+        self.f32 = None;
+        self.f64 = None;
+        self
+    }
 }
 
 impl ToValueBehavior for Number {
@@ -567,22 +583,6 @@ impl NumberBehavior for Number {
         } else {
             NumberType::Unknown
         }
-    }
-
-    fn empty(&mut self) -> &mut Self {
-        self.u8 = None;
-        self.u16 = None;
-        self.u32 = None;
-        self.u64 = None;
-        self.u128 = None;
-        self.i8 = None;
-        self.i16 = None;
-        self.i32 = None;
-        self.i64 = None;
-        self.i128 = None;
-        self.f32 = None;
-        self.f64 = None;
-        self
     }
 }
 
@@ -1033,40 +1033,40 @@ mod tests {
     fn test_setters_and_getters() {
         let mut number = Number::default();
 
-        number.empty().set_u8(42);
+        number.clean().set_u8(42);
         assert_eq!(number.get_u8(), Some(42));
 
-        number.empty().set_u16(12345);
+        number.clean().set_u16(12345);
         assert_eq!(number.get_u16(), Some(12345));
 
-        number.empty().set_u32(12345678);
+        number.clean().set_u32(12345678);
         assert_eq!(number.get_u32(), Some(12345678));
 
-        number.empty().set_u64(12345678901234);
+        number.clean().set_u64(12345678901234);
         assert_eq!(number.get_u64(), Some(12345678901234));
 
-        number.empty().set_u128(123456789012345678901234567890);
+        number.clean().set_u128(123456789012345678901234567890);
         assert_eq!(number.get_u128(), Some(123456789012345678901234567890));
 
-        number.empty().set_i8(-42);
+        number.clean().set_i8(-42);
         assert_eq!(number.get_i8(), Some(-42));
 
-        number.empty().set_i16(-12345);
+        number.clean().set_i16(-12345);
         assert_eq!(number.get_i16(), Some(-12345));
 
-        number.empty().set_i32(-12345678);
+        number.clean().set_i32(-12345678);
         assert_eq!(number.get_i32(), Some(-12345678));
 
-        number.empty().set_i64(-12345678901234);
+        number.clean().set_i64(-12345678901234);
         assert_eq!(number.get_i64(), Some(-12345678901234));
 
-        number.empty().set_i128(-123456789012345678901234567890);
+        number.clean().set_i128(-123456789012345678901234567890);
         assert_eq!(number.get_i128(), Some(-123456789012345678901234567890));
 
-        number.empty().set_f32(3.14);
+        number.clean().set_f32(3.14);
         assert_eq!(number.get_f32(), Some(3.14));
 
-        number.empty().set_f64(6.283185307179586);
+        number.clean().set_f64(6.283185307179586);
         assert_eq!(number.get_f64(), Some(6.283185307179586));
     }
 
@@ -1074,16 +1074,16 @@ mod tests {
     fn test_display() {
         let mut number = Number::default();
 
-        number.empty().set_u8(42);
+        number.clean().set_u8(42);
         assert_eq!(format!("{}", number), "42");
 
-        number.empty().set_i32(-12345678);
+        number.clean().set_i32(-12345678);
         assert_eq!(format!("{}", number), "-12345678");
 
-        number.empty().set_f32(3.14);
+        number.clean().set_f32(3.14);
         assert_eq!(format!("{}", number), "3.14");
 
-        number.empty().set_u128(123456789012345678901234567890);
+        number.clean().set_u128(123456789012345678901234567890);
         assert_eq!(format!("{}", number), "123456789012345678901234567890");
     }
 
@@ -1091,7 +1091,7 @@ mod tests {
     fn test_type_checkers() {
         let mut number = Number::default();
 
-        number.empty().set_u8(42);
+        number.clean().set_u8(42);
         assert!(number.is_u8());
         assert!(number.is_integer());
         assert!(!number.is_float());
@@ -1101,7 +1101,7 @@ mod tests {
         assert!(number.is_positive());
         assert!(!number.is_negative());
 
-        number.empty().set_i32(-12345678);
+        number.clean().set_i32(-12345678);
         assert!(number.is_i32());
         assert!(number.is_integer());
         assert!(!number.is_float());
@@ -1111,7 +1111,7 @@ mod tests {
         assert!(!number.is_positive());
         assert!(number.is_negative());
 
-        number.empty().set_f32(0.0);
+        number.clean().set_f32(0.0);
         assert!(number.is_f32());
         assert!(!number.is_integer());
         assert!(number.is_float());
@@ -1124,40 +1124,40 @@ mod tests {
     fn test_set_and_get() {
         let mut number = Number::default();
 
-        number.empty().set_u8(42);
+        number.clean().set_u8(42);
         assert_eq!(number.get_u8(), Some(42));
 
-        number.empty().set_u16(42);
+        number.clean().set_u16(42);
         assert_eq!(number.get_u16(), Some(42));
 
-        number.empty().set_u32(42);
+        number.clean().set_u32(42);
         assert_eq!(number.get_u32(), Some(42));
 
-        number.empty().set_u64(42);
+        number.clean().set_u64(42);
         assert_eq!(number.get_u64(), Some(42));
 
-        number.empty().set_u128(42);
+        number.clean().set_u128(42);
         assert_eq!(number.get_u128(), Some(42));
 
-        number.empty().set_i8(-42);
+        number.clean().set_i8(-42);
         assert_eq!(number.get_i8(), Some(-42));
 
-        number.empty().set_i16(-42);
+        number.clean().set_i16(-42);
         assert_eq!(number.get_i16(), Some(-42));
 
-        number.empty().set_i32(-42);
+        number.clean().set_i32(-42);
         assert_eq!(number.get_i32(), Some(-42));
 
-        number.empty().set_i64(-42);
+        number.clean().set_i64(-42);
         assert_eq!(number.get_i64(), Some(-42));
 
-        number.empty().set_i128(-42);
+        number.clean().set_i128(-42);
         assert_eq!(number.get_i128(), Some(-42));
 
-        number.empty().set_f32(-42.0);
+        number.clean().set_f32(-42.0);
         assert_eq!(number.get_f32(), Some(-42.0));
 
-        number.empty().set_f64(-42.0);
+        number.clean().set_f64(-42.0);
         assert_eq!(number.get_f64(), Some(-42.0));
     }
 
@@ -1165,40 +1165,40 @@ mod tests {
     fn test_is_methods() {
         let mut number = Number::default();
 
-        number.empty().set_u8(42);
+        number.clean().set_u8(42);
         assert!(number.is_u8());
 
-        number.empty().set_u16(42);
+        number.clean().set_u16(42);
         assert!(number.is_u16());
 
-        number.empty().set_u32(42);
+        number.clean().set_u32(42);
         assert!(number.is_u32());
 
-        number.empty().set_u64(42);
+        number.clean().set_u64(42);
         assert!(number.is_u64());
 
-        number.empty().set_u128(42);
+        number.clean().set_u128(42);
         assert!(number.is_u128());
 
-        number.empty().set_i8(-42);
+        number.clean().set_i8(-42);
         assert!(number.is_i8());
 
-        number.empty().set_i16(-42);
+        number.clean().set_i16(-42);
         assert!(number.is_i16());
 
-        number.empty().set_i32(-42);
+        number.clean().set_i32(-42);
         assert!(number.is_i32());
 
-        number.empty().set_i64(-42);
+        number.clean().set_i64(-42);
         assert!(number.is_i64());
 
-        number.empty().set_i128(-42);
+        number.clean().set_i128(-42);
         assert!(number.is_i128());
 
-        number.empty().set_f32(-42.0);
+        number.clean().set_f32(-42.0);
         assert!(number.is_f32());
 
-        number.empty().set_f64(-42.0);
+        number.clean().set_f64(-42.0);
         assert!(number.is_f64());
     }
 
@@ -1206,40 +1206,40 @@ mod tests {
     fn test_number_type() {
         let mut number = Number::default();
 
-        number.empty().set_u8(10);
+        number.clean().set_u8(10);
         assert_eq!(number.number_type(), NumberType::U8);
 
-        number.empty().set_u16(10_000);
+        number.clean().set_u16(10_000);
         assert_eq!(number.number_type(), NumberType::U16);
 
-        number.empty().set_u32(1_000_000);
+        number.clean().set_u32(1_000_000);
         assert_eq!(number.number_type(), NumberType::U32);
 
-        number.empty().set_u64(10_000_000_000);
+        number.clean().set_u64(10_000_000_000);
         assert_eq!(number.number_type(), NumberType::U64);
 
-        number.empty().set_u128(100_000_000_000_000_000_000);
+        number.clean().set_u128(100_000_000_000_000_000_000);
         assert_eq!(number.number_type(), NumberType::U128);
 
-        number.empty().set_i8(-42);
+        number.clean().set_i8(-42);
         assert_eq!(number.number_type(), NumberType::I8);
 
-        number.empty().set_i16(-12345);
+        number.clean().set_i16(-12345);
         assert_eq!(number.number_type(), NumberType::I16);
 
-        number.empty().set_i32(-1_000_000);
+        number.clean().set_i32(-1_000_000);
         assert_eq!(number.number_type(), NumberType::I32);
 
-        number.empty().set_i64(-10_000_000_000);
+        number.clean().set_i64(-10_000_000_000);
         assert_eq!(number.number_type(), NumberType::I64);
 
-        number.empty().set_i128(-100_000_000_000_000_000_000);
+        number.clean().set_i128(-100_000_000_000_000_000_000);
         assert_eq!(number.number_type(), NumberType::I128);
 
-        number.empty().set_f32(-1_000_000.0);
+        number.clean().set_f32(-1_000_000.0);
         assert_eq!(number.number_type(), NumberType::F32);
 
-        number.empty().set_f64(-10_000_000_000.0);
+        number.clean().set_f64(-10_000_000_000.0);
         assert_eq!(number.number_type(), NumberType::F64);
     }
 }

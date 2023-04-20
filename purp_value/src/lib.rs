@@ -45,6 +45,7 @@ pub mod serde_value;
 pub mod to;
 pub mod types;
 pub mod value;
+pub mod impls;
 
 #[cfg(feature = "parser")]
 #[macro_use]
