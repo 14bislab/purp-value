@@ -221,7 +221,7 @@ impl ToValueBehavior for Vec<Value> {
 
 #[cfg(test)]
 mod tests {
-    use super::{Array, DateTime, Number, Object, StringB, Value};
+    use crate::prelude::*;
 
     // Tests for the different data types and their conversion to a `Value` enum.
     #[test]

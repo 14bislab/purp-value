@@ -2,33 +2,7 @@ use crate::prelude::*;
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Debug, Display, Formatter};
 
-/// Represents an array of `Value`s.
-#[derive(Debug, Clone, PartialEq)]
-pub struct Array {
-    pub values: Vec<Value>,
-}
-
-impl ToValueBehavior for Array {
-    fn to_value(&self) -> Value {
-        Value::Array(self.clone())
-    }
-}
-
-impl Array {
-    /// Creates a new empty `Array`.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use my_crate::Array;
-    ///
-    /// let empty_array = Array::new();
-    /// assert_eq!(empty_array.len(), 0);
-    /// ```
-    pub fn new() -> Self {
-        Self { values: vec![] }
-    }
-
+pub trait ArrayBehavior {
     /// Appends a value to the end of the array.
     ///
     /// # Examples
@@ -44,9 +18,7 @@ impl Array {
     /// assert_eq!(array.get(0), Some(&Value::from(42)));
     /// assert_eq!(array.get(1), Some(&Value::from("hello")));
     /// ```
-    pub fn push(&mut self, value: Value) {
-        self.values.push(value);
-    }
+    fn push(&mut self, value: Value);
 
     /// Removes the last element from the array and returns it, or `None` if the array is empty.
     ///
@@ -65,9 +37,7 @@ impl Array {
     /// let empty_popped_value = empty_array.pop();
     /// assert_eq!(empty_popped_value, None);
     /// ```
-    pub fn pop(&mut self) -> Option<Value> {
-        self.values.pop()
-    }
+    fn pop(&mut self) -> Option<Value>;
 
     /// Returns the number of elements in the array.
     ///
@@ -82,9 +52,7 @@ impl Array {
     /// array.push(Value::from(42));
     /// assert_eq!(array.len(), 1);
     /// ```
-    pub fn len(&self) -> usize {
-        self.values.len()
-    }
+    fn len(&self) -> usize;
 
     /// Returns `true` if the array contains no elements.
     ///
@@ -100,17 +68,65 @@ impl Array {
     /// array.push(Value::from(42));
     /// assert!(!array.is_empty());
     /// ```
-    pub fn is_empty(&self) -> bool {
+    fn is_empty(&self) -> bool;
+
+    /// Returns a reference to the value at the specified index, or `None` if the index is out of bounds.
+    fn get(&self, index: usize) -> Option<&Value>;
+
+    /// Returns a mutable reference to the value at the specified index, or `None` if the index is out of bounds.
+    fn get_mut(&mut self, index: usize) -> Option<&mut Value>;
+}
+
+/// Represents an array of `Value`s.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Array {
+    pub values: Vec<Value>,
+}
+
+impl Array {
+    /// Creates a new empty `Array`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use my_crate::Array;
+    ///
+    /// let empty_array = Array::new();
+    /// assert_eq!(empty_array.len(), 0);
+    /// ```
+    pub fn new() -> Self {
+        Self { values: vec![] }
+    }
+}
+
+impl ToValueBehavior for Array {
+    fn to_value(&self) -> Value {
+        Value::Array(self.clone())
+    }
+}
+
+impl ArrayBehavior for Array {
+    fn push(&mut self, value: Value) {
+        self.values.push(value);
+    }
+
+    fn pop(&mut self) -> Option<Value> {
+        self.values.pop()
+    }
+
+    fn len(&self) -> usize {
+        self.values.len()
+    }
+
+    fn is_empty(&self) -> bool {
         self.values.is_empty()
     }
 
-    /// Returns a reference to the value at the specified index, or `None` if the index is out of bounds.
-    pub fn get(&self, index: usize) -> Option<&Value> {
+    fn get(&self, index: usize) -> Option<&Value> {
         self.values.get(index)
     }
 
-    /// Returns a mutable reference to the value at the specified index, or `None` if the index is out of bounds.
-    pub fn get_mut(&mut self, index: usize) -> Option<&mut Value> {
+    fn get_mut(&mut self, index: usize) -> Option<&mut Value> {
         self.values.get_mut(index)
     }
 }
