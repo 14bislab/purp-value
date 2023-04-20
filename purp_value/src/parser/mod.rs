@@ -1,12 +1,11 @@
-use std::collections::HashMap;
-
+use crate::prelude::*;
 use pest::Parser;
+use std::collections::HashMap;
 
 #[derive(Parser)]
 #[grammar = "parser/value.pest"]
 struct JSONParser;
 
-use crate::{Error, Number, StringB, Value};
 use pest::iterators::Pair;
 
 impl Value {
@@ -53,12 +52,8 @@ impl Value {
 
                 Self::from(map)
             }
-            Rule::array => {
-                Self::from(pair.into_inner().map(Self::parse_value).collect::<Vec<_>>())
-            }
-            Rule::string => {
-                Self::from(StringB::from(pair.into_inner().next().unwrap().as_str()))
-            }
+            Rule::array => Self::from(pair.into_inner().map(Self::parse_value).collect::<Vec<_>>()),
+            Rule::string => Self::from(StringB::from(pair.into_inner().next().unwrap().as_str())),
             Rule::number => Self::from(Number::try_from(pair.as_str()).unwrap()),
             Rule::boolean => Self::Boolean(pair.as_str().parse().unwrap()),
             Rule::null => Self::Null,
@@ -75,8 +70,7 @@ impl Value {
 
 #[cfg(test)]
 mod tests {
-    use crate::Object;
-
+    use crate::prelude::*;
     use super::*;
 
     #[test]
@@ -93,10 +87,7 @@ mod tests {
             map.insert("test2".to_string(), Value::String(StringB::from("ok")));
             map.insert(
                 "test3".to_string(),
-                Value::from(vec![
-                    Value::from(0),
-                    Value::from(1),
-                ]),
+                Value::from(vec![Value::from(0), Value::from(1)]),
             );
             Object::HashMap(map)
         });
@@ -126,7 +117,10 @@ mod tests {
         let float = "1.0";
 
         assert_eq!(Value::str_to_value(int), Ok(Value::Number(Number::from(0))));
-        assert_eq!(Value::str_to_value(float), Ok(Value::Number(Number::from(1.0))));
+        assert_eq!(
+            Value::str_to_value(float),
+            Ok(Value::Number(Number::from(1.0)))
+        );
     }
 
     #[test]

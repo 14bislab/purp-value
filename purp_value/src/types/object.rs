@@ -1,5 +1,4 @@
-use crate::traits::ToValueBehavior;
-use crate::Value;
+use crate::prelude::*;
 use std::collections::{BTreeMap, HashMap};
 use std::iter::Iterator;
 
@@ -180,8 +179,7 @@ impl<'a> Object {
 
 #[cfg(test)]
 mod tests {
-    use crate::StringB;
-
+    use crate::prelude::*;
     use super::*;
 
     #[test]

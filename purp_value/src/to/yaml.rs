@@ -61,8 +61,7 @@ impl Value {
 #[test]
 fn test_to_yaml() {
     use std::collections::BTreeMap;
-
-    use crate::{traits::ToValueBehavior, value::Value, Array, Number, Object, StringB};
+    use crate::prelude::*;
 
     let object = Object::from(
         vec![

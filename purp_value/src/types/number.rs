@@ -5,8 +5,213 @@
 //! to set and retrieve these values safely and unsafely, as well as check their properties.
 //!
 //! The `NumberType` enum is used to identify the type of number stored in a `Number` instance.
-use crate::{traits::ToValueBehavior, value::Value, Error};
+use crate::prelude::*;
 use std::fmt::Display;
+
+pub trait NumberBehavior {
+    /// Sets the value of the `Number` struct to the given `u8` value.
+    ///
+    /// # Arguments
+    ///
+    /// * `value` - A `u8` value to set in the `Number` struct.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_u8(42);
+    /// ```
+    fn set_u8(&mut self, value: u8);
+
+    fn set_u16(&mut self, value: u16);
+
+    fn set_u32(&mut self, value: u32);
+
+    fn set_u64(&mut self, value: u64);
+
+    fn set_u128(&mut self, value: u128);
+
+    fn set_i8(&mut self, value: i8);
+
+    fn set_i16(&mut self, value: i16);
+
+    fn set_i32(&mut self, value: i32);
+
+    fn set_i64(&mut self, value: i64);
+
+    fn set_i128(&mut self, value: i128);
+
+    fn set_f32(&mut self, value: f32);
+
+    fn set_f64(&mut self, value: f64);
+
+    /// Returns the `u8` value stored in the `Number` struct, if any.
+    ///
+    /// # Returns
+    ///
+    /// An `Option<u8>` containing the stored `u8` value if it exists, or `None` otherwise.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_u8(42);
+    /// assert_eq!(num.get_u8(), Some(42));
+    /// ```
+    fn get_u8(&self) -> Option<u8>;
+
+    fn get_u16(&self) -> Option<u16>;
+
+    fn get_u32(&self) -> Option<u32>;
+
+    fn get_u64(&self) -> Option<u64>;
+
+    fn get_u128(&self) -> Option<u128>;
+
+    fn get_i8(&self) -> Option<i8>;
+
+    fn get_i16(&self) -> Option<i16>;
+
+    fn get_i32(&self) -> Option<i32>;
+
+    fn get_i64(&self) -> Option<i64>;
+
+    fn get_i128(&self) -> Option<i128>;
+
+    fn get_f32(&self) -> Option<f32>;
+
+    fn get_f64(&self) -> Option<f64>;
+
+    /// Returns the `u8` value stored in the `Number` struct, without checking if it exists.
+    ///
+    /// # Safety
+    ///
+    /// This function is unsafe because it can return an incorrect value if a `u8` value is not
+    /// stored in the `Number` struct.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_u8(42);
+    /// unsafe { assert_eq!(num.get_u8_unsafe(), 42) };
+    /// ```
+    fn get_u8_unsafe(&self) -> u8;
+
+    fn get_u16_unsafe(&self) -> u16;
+
+    fn get_u32_unsafe(&self) -> u32;
+
+    fn get_u64_unsafe(&self) -> u64;
+
+    fn get_u128_unsafe(&self) -> u128;
+
+    fn get_i8_unsafe(&self) -> i8;
+
+    fn get_i16_unsafe(&self) -> i16;
+
+    fn get_i32_unsafe(&self) -> i32;
+
+    fn get_i64_unsafe(&self) -> i64;
+
+    fn get_i128_unsafe(&self) -> i128;
+
+    fn get_f32_unsafe(&self) -> f32;
+
+    fn get_f64_unsafe(&self) -> f64;
+
+    /// Checks if the stored number is of type `i8`.
+    ///
+    /// # Returns
+    ///
+    /// `true` if the stored number is of type `i8`, `false` otherwise.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_i8(-42);
+    /// assert_eq!(num.is_i8(), true);
+    /// ```
+    fn is_i8(&self) -> bool;
+
+    fn is_i16(&self) -> bool;
+
+    fn is_i32(&self) -> bool;
+
+    fn is_i64(&self) -> bool;
+
+    fn is_i128(&self) -> bool;
+
+    fn is_u8(&self) -> bool;
+
+    fn is_u16(&self) -> bool;
+
+    fn is_u32(&self) -> bool;
+
+    fn is_u64(&self) -> bool;
+
+    fn is_u128(&self) -> bool;
+
+    fn is_f32(&self) -> bool;
+
+    fn is_f64(&self) -> bool;
+
+    /// Checks if the `Number` struct contains any value.
+    ///
+    /// # Returns
+    ///
+    /// `true` if the `Number` struct contains a value, `false` otherwise.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let num = Number::default();
+    /// assert_eq!(num.is_number(), false);
+    /// ```
+    fn is_number(&self) -> bool;
+    fn is_integer(&self) -> bool;
+    fn is_float(&self) -> bool;
+    fn is_signed(&self) -> bool;
+    fn is_unsigned(&self) -> bool;
+    fn is_zero(&self) -> bool;
+    fn is_positive(&self) -> bool;
+    fn is_negative(&self) -> bool;
+
+    /// fn is_integer(&self) -> bool { /* ... */ }
+    // ...
+
+    /// Determines the type of number stored in the `Number` struct.
+    ///
+    /// # Returns
+    ///
+    /// A `NumberType` variant representing the type of the stored number.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_u32(42);
+    /// assert_eq!(num.number_type(), NumberType::U32);
+    /// ```
+    fn number_type(&self) -> NumberType;
+
+    /// Empties the `Number` struct by removing any stored value.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to the `Number` struct after removing any stored value.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let mut num = Number::default();
+    /// num.set_u64(42);
+    /// num.empty();
+    /// assert_eq!(num.is_number(), false);
+    /// ```
+    fn empty(&mut self) -> &mut Self;
+}
 
 /// An enum representing different numeric types.
 #[derive(Debug, Clone, PartialEq)]
@@ -59,266 +264,200 @@ impl ToValueBehavior for Number {
 
 // Implementations of methods for setting and getting number values safely and unsafely,
 // as well as checking their properties and identifying the number type.
-impl Number {
-    /// Sets the value of the `Number` struct to the given `u8` value.
-    ///
-    /// # Arguments
-    ///
-    /// * `value` - A `u8` value to set in the `Number` struct.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_u8(42);
-    /// ```
-    pub fn set_u8(&mut self, value: u8) {
+impl NumberBehavior for Number {
+    fn set_u8(&mut self, value: u8) {
         self.u8 = Some(value);
     }
 
-    pub fn set_u16(&mut self, value: u16) {
+    fn set_u16(&mut self, value: u16) {
         self.u16 = Some(value);
     }
 
-    pub fn set_u32(&mut self, value: u32) {
+    fn set_u32(&mut self, value: u32) {
         self.u32 = Some(value);
     }
 
-    pub fn set_u64(&mut self, value: u64) {
+    fn set_u64(&mut self, value: u64) {
         self.u64 = Some(value);
     }
 
-    pub fn set_u128(&mut self, value: u128) {
+    fn set_u128(&mut self, value: u128) {
         self.u128 = Some(value);
     }
 
-    pub fn set_i8(&mut self, value: i8) {
+    fn set_i8(&mut self, value: i8) {
         self.i8 = Some(value);
     }
 
-    pub fn set_i16(&mut self, value: i16) {
+    fn set_i16(&mut self, value: i16) {
         self.i16 = Some(value);
     }
 
-    pub fn set_i32(&mut self, value: i32) {
+    fn set_i32(&mut self, value: i32) {
         self.i32 = Some(value);
     }
 
-    pub fn set_i64(&mut self, value: i64) {
+    fn set_i64(&mut self, value: i64) {
         self.i64 = Some(value);
     }
 
-    pub fn set_i128(&mut self, value: i128) {
+    fn set_i128(&mut self, value: i128) {
         self.i128 = Some(value);
     }
 
-    pub fn set_f32(&mut self, value: f32) {
+    fn set_f32(&mut self, value: f32) {
         self.f32 = Some(value);
     }
 
-    pub fn set_f64(&mut self, value: f64) {
+    fn set_f64(&mut self, value: f64) {
         self.f64 = Some(value);
     }
 
-    // ...
-
-    /// Returns the `u8` value stored in the `Number` struct, if any.
-    ///
-    /// # Returns
-    ///
-    /// An `Option<u8>` containing the stored `u8` value if it exists, or `None` otherwise.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_u8(42);
-    /// assert_eq!(num.get_u8(), Some(42));
-    /// ```
-    pub fn get_u8(&self) -> Option<u8> {
+    fn get_u8(&self) -> Option<u8> {
         self.u8
     }
 
-    pub fn get_u16(&self) -> Option<u16> {
+    fn get_u16(&self) -> Option<u16> {
         self.u16
     }
 
-    pub fn get_u32(&self) -> Option<u32> {
+    fn get_u32(&self) -> Option<u32> {
         self.u32
     }
 
-    pub fn get_u64(&self) -> Option<u64> {
+    fn get_u64(&self) -> Option<u64> {
         self.u64
     }
 
-    pub fn get_u128(&self) -> Option<u128> {
+    fn get_u128(&self) -> Option<u128> {
         self.u128
     }
 
-    pub fn get_i8(&self) -> Option<i8> {
+    fn get_i8(&self) -> Option<i8> {
         self.i8
     }
 
-    pub fn get_i16(&self) -> Option<i16> {
+    fn get_i16(&self) -> Option<i16> {
         self.i16
     }
 
-    pub fn get_i32(&self) -> Option<i32> {
+    fn get_i32(&self) -> Option<i32> {
         self.i32
     }
 
-    pub fn get_i64(&self) -> Option<i64> {
+    fn get_i64(&self) -> Option<i64> {
         self.i64
     }
 
-    pub fn get_i128(&self) -> Option<i128> {
+    fn get_i128(&self) -> Option<i128> {
         self.i128
     }
 
-    pub fn get_f32(&self) -> Option<f32> {
+    fn get_f32(&self) -> Option<f32> {
         self.f32
     }
 
-    pub fn get_f64(&self) -> Option<f64> {
+    fn get_f64(&self) -> Option<f64> {
         self.f64
     }
 
-    /// Returns the `u8` value stored in the `Number` struct, without checking if it exists.
-    ///
-    /// # Safety
-    ///
-    /// This function is unsafe because it can return an incorrect value if a `u8` value is not
-    /// stored in the `Number` struct.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_u8(42);
-    /// unsafe { assert_eq!(num.get_u8_unsafe(), 42) };
-    /// ```
-    pub fn get_u8_unsafe(&self) -> u8 {
+    fn get_u8_unsafe(&self) -> u8 {
         self.u8.unwrap()
     }
 
-    pub fn get_u16_unsafe(&self) -> u16 {
+    fn get_u16_unsafe(&self) -> u16 {
         self.u16.unwrap()
     }
 
-    pub fn get_u32_unsafe(&self) -> u32 {
+    fn get_u32_unsafe(&self) -> u32 {
         self.u32.unwrap()
     }
 
-    pub fn get_u64_unsafe(&self) -> u64 {
+    fn get_u64_unsafe(&self) -> u64 {
         self.u64.unwrap()
     }
 
-    pub fn get_u128_unsafe(&self) -> u128 {
+    fn get_u128_unsafe(&self) -> u128 {
         self.u128.unwrap()
     }
 
-    pub fn get_i8_unsafe(&self) -> i8 {
+    fn get_i8_unsafe(&self) -> i8 {
         self.i8.unwrap()
     }
 
-    pub fn get_i16_unsafe(&self) -> i16 {
+    fn get_i16_unsafe(&self) -> i16 {
         self.i16.unwrap()
     }
 
-    pub fn get_i32_unsafe(&self) -> i32 {
+    fn get_i32_unsafe(&self) -> i32 {
         self.i32.unwrap()
     }
 
-    pub fn get_i64_unsafe(&self) -> i64 {
+    fn get_i64_unsafe(&self) -> i64 {
         self.i64.unwrap()
     }
 
-    pub fn get_i128_unsafe(&self) -> i128 {
+    fn get_i128_unsafe(&self) -> i128 {
         self.i128.unwrap()
     }
 
-    pub fn get_f32_unsafe(&self) -> f32 {
+    fn get_f32_unsafe(&self) -> f32 {
         self.f32.unwrap()
     }
 
-    pub fn get_f64_unsafe(&self) -> f64 {
+    fn get_f64_unsafe(&self) -> f64 {
         self.f64.unwrap()
     }
 
-    /// Checks if the stored number is of type `i8`.
-    ///
-    /// # Returns
-    ///
-    /// `true` if the stored number is of type `i8`, `false` otherwise.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_i8(-42);
-    /// assert_eq!(num.is_i8(), true);
-    /// ```
-    pub fn is_i8(&self) -> bool {
+    fn is_i8(&self) -> bool {
         self.i8.is_some()
     }
 
-    pub fn is_i16(&self) -> bool {
+    fn is_i16(&self) -> bool {
         self.i16.is_some()
     }
 
-    pub fn is_i32(&self) -> bool {
+    fn is_i32(&self) -> bool {
         self.i32.is_some()
     }
 
-    pub fn is_i64(&self) -> bool {
+    fn is_i64(&self) -> bool {
         self.i64.is_some()
     }
 
-    pub fn is_i128(&self) -> bool {
+    fn is_i128(&self) -> bool {
         self.i128.is_some()
     }
 
-    pub fn is_u8(&self) -> bool {
+    fn is_u8(&self) -> bool {
         self.u8.is_some()
     }
 
-    pub fn is_u16(&self) -> bool {
+    fn is_u16(&self) -> bool {
         self.u16.is_some()
     }
 
-    pub fn is_u32(&self) -> bool {
+    fn is_u32(&self) -> bool {
         self.u32.is_some()
     }
 
-    pub fn is_u64(&self) -> bool {
+    fn is_u64(&self) -> bool {
         self.u64.is_some()
     }
 
-    pub fn is_u128(&self) -> bool {
+    fn is_u128(&self) -> bool {
         self.u128.is_some()
     }
 
-    pub fn is_f32(&self) -> bool {
+    fn is_f32(&self) -> bool {
         self.f32.is_some()
     }
 
-    pub fn is_f64(&self) -> bool {
+    fn is_f64(&self) -> bool {
         self.f64.is_some()
     }
 
-    /// Checks if the `Number` struct contains any value.
-    ///
-    /// # Returns
-    ///
-    /// `true` if the `Number` struct contains a value, `false` otherwise.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let num = Number::default();
-    /// assert_eq!(num.is_number(), false);
-    /// ```
-    pub fn is_number(&self) -> bool {
+    fn is_number(&self) -> bool {
         self.is_i8()
             || self.is_i16()
             || self.is_i32()
@@ -346,7 +485,7 @@ impl Number {
     /// num.set_i32(42);
     /// assert_eq!(num.is_integer(), true);
     /// ```
-    pub fn is_integer(&self) -> bool {
+    fn is_integer(&self) -> bool {
         self.is_i8()
             || self.is_i16()
             || self.is_i32()
@@ -359,11 +498,11 @@ impl Number {
             || self.is_u128()
     }
 
-    pub fn is_float(&self) -> bool {
+    fn is_float(&self) -> bool {
         self.is_f32() || self.is_f64()
     }
 
-    pub fn is_signed(&self) -> bool {
+    fn is_signed(&self) -> bool {
         self.is_i8() && self.i8.unwrap() < 0
             || self.is_i16() && self.i16.unwrap() < 0
             || self.is_i32() && self.i32.unwrap() < 0
@@ -373,11 +512,11 @@ impl Number {
             || self.is_f64() && self.f64.unwrap() < 0.0
     }
 
-    pub fn is_unsigned(&self) -> bool {
+    fn is_unsigned(&self) -> bool {
         self.is_u8() || self.is_u16() || self.is_u32() || self.is_u64() || self.is_u128()
     }
 
-    pub fn is_zero(&self) -> bool {
+    fn is_zero(&self) -> bool {
         self.is_i8() && self.i8.unwrap() == 0
             || self.is_i16() && self.i16.unwrap() == 0
             || self.is_i32() && self.i32.unwrap() == 0
@@ -392,31 +531,15 @@ impl Number {
             || self.is_u128() && self.u128.unwrap() == 0
     }
 
-    pub fn is_positive(&self) -> bool {
+    fn is_positive(&self) -> bool {
         !self.is_signed() && !self.is_zero()
     }
 
-    pub fn is_negative(&self) -> bool {
+    fn is_negative(&self) -> bool {
         self.is_signed() && !self.is_zero()
     }
 
-    /// fn is_integer(&self) -> bool { /* ... */ }
-    // ...
-
-    /// Determines the type of number stored in the `Number` struct.
-    ///
-    /// # Returns
-    ///
-    /// A `NumberType` variant representing the type of the stored number.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_u32(42);
-    /// assert_eq!(num.number_type(), NumberType::U32);
-    /// ```
-    pub fn number_type(&self) -> NumberType {
+    fn number_type(&self) -> NumberType {
         if self.is_i8() {
             NumberType::I8
         } else if self.is_i16() {
@@ -446,21 +569,7 @@ impl Number {
         }
     }
 
-    /// Empties the `Number` struct by removing any stored value.
-    ///
-    /// # Returns
-    ///
-    /// A mutable reference to the `Number` struct after removing any stored value.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let mut num = Number::default();
-    /// num.set_u64(42);
-    /// num.empty();
-    /// assert_eq!(num.is_number(), false);
-    /// ```
-    pub fn empty(&mut self) -> &mut Self {
+    fn empty(&mut self) -> &mut Self {
         self.u8 = None;
         self.u16 = None;
         self.u32 = None;
@@ -918,7 +1027,7 @@ impl TryFrom<String> for Number {
 
 #[cfg(test)]
 mod tests {
-    use crate::{types::number::NumberType, Number};
+    use crate::prelude::*;
 
     #[test]
     fn test_setters_and_getters() {

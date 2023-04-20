@@ -10,6 +10,120 @@ use std::ops::Deref;
 
 use crate::traits::ToValueBehavior;
 
+pub trait StringBehavior {
+    /// Gets the byte representation of the string.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("hello");
+    /// let bytes = s.as_bytes();
+    /// ```
+    fn as_bytes(&self) -> &[u8];
+
+    /// Gets the string slice representation of the value.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("hello");
+    /// let slice = s.as_str();
+    /// ```
+    fn as_str(&self) -> &str;
+
+    /// Converts the value to a `String`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("hello");
+    /// let string = s.as_string();
+    /// ```
+    fn as_string(&self) -> String;
+
+    /// Gets the length of the string.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("hello");
+    /// assert_eq!(s.len(), 5);
+    /// ```
+    fn len(&self) -> usize;
+
+    /// Returns `true` if the string is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("");
+    /// assert!(s.is_empty());
+    /// ```
+    fn is_empty(&self) -> bool;
+
+    /// Converts the string to uppercase.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("hello");
+    /// assert_eq!(s.to_uppercase().as_str(), "HELLO");
+    /// ```
+    fn to_uppercase(&self) -> Self;
+
+    /// Converts the string to lowercase.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("HELLO");
+    /// assert_eq!(s.to_lowercase().as_str(), "hello");
+    /// ```
+    fn to_lowercase(&self) -> Self;
+
+    /// Removes whitespace at the beginning and end of the string.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("  hello  ");
+    /// assert_eq!(s.trim().as_str(), "hello");
+    /// ```
+    fn trim(&self) -> Self;
+
+    /// Replaces all occurrences of 'from' with 'to'.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s = StringB::new("hello world");
+    /// assert_eq!(s.replace("world", "planet").as_str(), "hello planet");
+    /// ```
+    fn replace(&self, from: &str, to: &str) -> Self;
+
+    /// Concatenates the current string with another string or `&str`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let s1 = StringB::new("hello");
+    /// let s2 = " world";
+    /// assert_eq!(s1.concat(s2).as_str(), "hello world");
+    /// ```
+    fn concat<T: AsRef<str>>(&self, other: T) -> Self;
+
+    /// Creates a new `StringB` from a `Vec<u8>`, assuming it is valid UTF-8.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// let bytes = vec![104, 101, 108, 108, 111]; // "hello" in UTF-8
+    /// let s = StringB::from_utf8(bytes);
+    /// ```
+    fn as_string_lossy(&self) -> String;
+    fn from_utf8(value: Vec<u8>) -> Self;
+}
+
 /// A custom string implementation with additional manipulation methods.
 #[derive(Debug, Clone, PartialEq)]
 pub struct StringB {
@@ -45,174 +159,87 @@ impl StringB {
             value: value.into(),
         }
     }
+}
 
+impl StringBehavior for StringB {
     #[cfg(feature = "cstring")]
-    pub fn as_bytes(&self) -> &[u8] {
+    fn as_bytes(&self) -> &[u8] {
         self.value.to_bytes()
     }
 
-    /// Gets the byte representation of the string.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello");
-    /// let bytes = s.as_bytes();
-    /// ```
-    pub fn as_bytes(&self) -> &[u8] {
+    fn as_bytes(&self) -> &[u8] {
         self.value.as_bytes()
     }
 
     #[cfg(feature = "cstring")]
-    pub fn as_str(&self) -> &str {
+    fn as_str(&self) -> &str {
         self.value.to_str().expect("CString is not valid UTF-8")
     }
 
-    /// Gets the string slice representation of the value.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello");
-    /// let slice = s.as_str();
-    /// ```
-    pub fn as_str(&self) -> &str {
+    fn as_str(&self) -> &str {
         self.value.as_str()
     }
 
     #[cfg(feature = "cstring")]
-    pub fn to_string(&self) -> String {
-        self.as_str().to_string()
+    fn as_string(&self) -> String {
+        self.as_str().as_string()
     }
 
-    /// Converts the value to a `String`.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello");
-    /// let string = s.to_string();
-    /// ```
-    pub fn to_string(&self) -> String {
+    fn as_string(&self) -> String {
         self.value.clone()
     }
 
-    /// Gets the length of the string.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello");
-    /// assert_eq!(s.len(), 5);
-    /// ```
-    pub fn len(&self) -> usize {
+    fn len(&self) -> usize {
         self.as_bytes().len()
     }
 
-    /// Returns `true` if the string is empty.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("");
-    /// assert!(s.is_empty());
-    /// ```
-    pub fn is_empty(&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    /// Converts the string to uppercase.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello");
-    /// assert_eq!(s.to_uppercase().as_str(), "HELLO");
-    /// ```
-    pub fn to_uppercase(&self) -> Self {
+    fn to_uppercase(&self) -> Self {
         let upper_str = self.as_str().to_uppercase();
         StringB::new(upper_str)
     }
 
-    /// Converts the string to lowercase.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("HELLO");
-    /// assert_eq!(s.to_lowercase().as_str(), "hello");
-    /// ```
-    pub fn to_lowercase(&self) -> Self {
+    fn to_lowercase(&self) -> Self {
         let lower_str = self.as_str().to_lowercase();
         StringB::new(lower_str)
     }
 
-    /// Removes whitespace at the beginning and end of the string.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("  hello  ");
-    /// assert_eq!(s.trim().as_str(), "hello");
-    /// ```
-    pub fn trim(&self) -> Self {
+    fn trim(&self) -> Self {
         let trimmed_str = self.as_str().trim();
         StringB::new(trimmed_str)
     }
 
-    /// Replaces all occurrences of 'from' with 'to'.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello world");
-    /// assert_eq!(s.replace("world", "planet").as_str(), "hello planet");
-    /// ```
-    pub fn replace(&self, from: &str, to: &str) -> Self {
+    fn replace(&self, from: &str, to: &str) -> Self {
         let replaced_str = self.as_str().replace(from, to);
         StringB::new(replaced_str)
     }
 
-    /// Concatenates the current string with another string or `&str`.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s1 = StringB::new("hello");
-    /// let s2 = " world";
-    /// assert_eq!(s1.concat(s2).as_str(), "hello world");
-    /// ```
-    pub fn concat<T: AsRef<str>>(&self, other: T) -> Self {
+    fn concat<T: AsRef<str>>(&self, other: T) -> Self {
         let mut result = String::from(self.as_str());
         result.push_str(other.as_ref());
         StringB::new(result)
     }
 
     #[cfg(feature = "cstring")]
-    pub fn to_string_lossy(&self) -> String {
-        self.value.to_string_lossy().into_owned()
+    fn as_string_lossy(&self) -> String {
+        self.value.as_string_lossy().into_owned()
     }
 
-    pub fn to_string_lossy(&self) -> String {
+    fn as_string_lossy(&self) -> String {
         self.value.clone()
     }
 
-    /// Creates a new `StringB` from a `Vec<u8>`, assuming it is valid UTF-8.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let bytes = vec![104, 101, 108, 108, 111]; // "hello" in UTF-8
-    /// let s = StringB::from_utf8(bytes);
-    /// ```
-    pub fn from_utf8(value: Vec<u8>) -> Self {
+    fn from_utf8(value: Vec<u8>) -> Self {
         StringB::new(String::from_utf8(value).unwrap())
     }
 
     #[cfg(feature = "cstring")]
-    pub fn from_utf8(value: Vec<u8>) -> Result<Self, FromUtf8Error> {
+    fn from_utf8(value: Vec<u8>) -> Result<Self, FromUtf8Error> {
         let c_string = CString::new(value)?;
-        let string = c_string.into_string()?;
+        let string = c_string.inas_string()?;
         Ok(StringB::new(string))
     }
 }
@@ -222,7 +249,7 @@ impl StringB {
 /// This allows `StringB` instances to be formatted using the `{}` placeholder in format strings.
 impl Display for StringB {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.to_string_lossy())
+        write!(f, "{}", self.as_string_lossy())
     }
 }
 

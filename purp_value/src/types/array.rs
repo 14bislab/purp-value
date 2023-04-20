@@ -1,5 +1,4 @@
-use crate::traits::ToValueBehavior;
-use crate::{Object, Value};
+use crate::prelude::*;
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Debug, Display, Formatter};
 
@@ -212,8 +211,7 @@ impl<K: AsRef<str>, V: Into<Value>> From<BTreeMap<K, V>> for Array {
 
 #[cfg(test)]
 mod tests {
-    use super::Array;
-    use crate::Value;
+    use crate::prelude::*;
     use std::collections::{BTreeMap, HashMap};
 
     #[test]

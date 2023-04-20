@@ -1,4 +1,4 @@
-use crate::Value;
+use crate::prelude::*;
 use std::collections::{BTreeMap, HashMap};
 
 /// A trait for converting types to `Value`.
@@ -162,7 +162,7 @@ impl FromValueBehavior for String {
 
     fn from_value(value: Value) -> Option<Self::Item> {
         if let Value::String(string_b) = value {
-            Some(string_b.to_string())
+            Some(string_b.as_string())
         } else {
             None
         }
