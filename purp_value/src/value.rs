@@ -18,61 +18,7 @@ use crate::prelude::*;
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Display, Formatter};
-
-pub trait ValueTrait {}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum ValueKey {
-    String(String),
-    Number(usize),
-}
-
-impl ValueKey {
-    pub fn to_string(&self) -> String {
-        match self {
-            ValueKey::String(s) => s.clone(),
-            ValueKey::Number(n) => n.to_string(),
-        }
-    }
-
-    pub fn to_usize(&self) -> usize {
-        match self {
-            ValueKey::String(s) => s.parse().unwrap(),
-            ValueKey::Number(n) => *n,
-        }
-    }
-}
-
-impl From<String> for ValueKey {
-    fn from(s: String) -> Self {
-        ValueKey::String(s)
-    }
-}
-
-impl From<&str> for ValueKey {
-    fn from(s: &str) -> Self {
-        ValueKey::String(s.to_string())
-    }
-}
-
-impl From<u32> for ValueKey {
-    fn from(n: u32) -> Self {
-        ValueKey::Number(n as usize)
-    }
-}
-
-use std::iter::FromIterator;
-
-impl<'a> FromIterator<&'a ValueKey> for ValueKey {
-    fn from_iter<I: IntoIterator<Item = &'a ValueKey>>(iter: I) -> Self {
-        let mut iterator = iter.into_iter();
-        match iterator.next() {
-            Some(ValueKey::String(s)) => ValueKey::String(s.clone()),
-            Some(ValueKey::Number(n)) => ValueKey::Number(*n),
-            None => ValueKey::String(String::new()),
-        }
-    }
-}
+use std::ops::Deref;
 
 /// Represents different data types as an enum.
 #[derive(Debug, Clone, PartialEq)]
@@ -254,15 +200,18 @@ where
     }
 }
 
-impl ToValueBehavior for HashMap<String, Value> {
+impl<T> ToValueBehavior for HashMap<T, Value>
+where
+    T: ValueKeyBehavior,
+{
     fn to_value(&self) -> Value {
-        Object::HashMap(self.clone()).to_value()
+        Object::from(self.clone()).to_value()
     }
 }
 
 impl ToValueBehavior for BTreeMap<String, Value> {
     fn to_value(&self) -> Value {
-        Object::BTreeMap(self.clone()).to_value()
+        Object::from(self.clone()).to_value()
     }
 }
 

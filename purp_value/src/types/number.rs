@@ -255,7 +255,7 @@ impl Number {
     /// num.clean();
     /// assert_eq!(num.is_number(), false);
     /// ```
-    fn clean(&mut self) -> &mut Self {
+    pub fn clean(&mut self) -> &mut Self {
         self.u8 = None;
         self.u16 = None;
         self.u32 = None;

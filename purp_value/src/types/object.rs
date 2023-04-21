@@ -6,17 +6,17 @@ pub trait ObjectBehavior {
     /// Inserts a key-value pair into the object. If the key already exists, returns the previous value associated with the key.
     fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
     where
-        T: Into<ValueKey> + Clone;
+        T: ValueKeyBehavior;
 
     /// Removes a key-value pair from the object and returns the associated value. If the key is not present, returns `None`.
     fn remove<T>(&mut self, key: &T) -> Option<Value>
     where
-        T: Into<ValueKey> + Clone;
+        T: ValueKeyBehavior;
 
     /// Returns `true` if the object contains a value for the specified key, otherwise `false`.
     fn contains_key<T>(&self, key: &T) -> bool
     where
-        T: Into<ValueKey> + Clone;
+        T: ValueKeyBehavior;
 
     /// Returns a `Vec` of references to the keys in the object, in the order they were inserted.
     fn keys(&self) -> Vec<&ValueKey>;
@@ -52,7 +52,7 @@ impl Object {
     }
 
     /// Removes all key-value pairs from the object.
-    pub fn clear(&mut self) {
+    pub fn clean(&mut self) {
         match self {
             Object::BTreeMap(map) => map.clear(),
             Object::HashMap(map) => map.clear(),
@@ -63,9 +63,9 @@ impl Object {
 impl ObjectBehavior for Object {
     fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
-        let key = key.into();
+        let key = key.to_value_key();
         match self {
             Object::BTreeMap(map) => map.insert(key, value),
             Object::HashMap(map) => map.insert(key, value),
@@ -74,9 +74,9 @@ impl ObjectBehavior for Object {
 
     fn remove<T>(&mut self, key: &T) -> Option<Value>
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
-        let key: ValueKey = key.clone().into();
+        let key: ValueKey = key.to_value_key();
         match self {
             Object::BTreeMap(map) => map.remove(&key),
             Object::HashMap(map) => map.remove(&key),
@@ -85,9 +85,9 @@ impl ObjectBehavior for Object {
 
     fn contains_key<T>(&self, key: &T) -> bool
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
-        let key: ValueKey = key.clone().into();
+        let key: ValueKey = key.to_value_key();
         match self {
             Object::BTreeMap(map) => map.contains_key(&key),
             Object::HashMap(map) => map.contains_key(&key),
@@ -139,14 +139,14 @@ impl ToValueBehavior for Object {
 
 impl<T> From<BTreeMap<T, Value>> for Object
 where
-    T: Into<ValueKey> + Clone + ValueKeyBehavior,
+    T: ValueKeyBehavior,
 {
     /// Converts BTreeMap<ValueKey, Value> into Object.
     fn from(value: BTreeMap<T, Value>) -> Self {
         Object::BTreeMap(
             value
                 .iter()
-                .map(|(k, v)| (k.clone().into(), v.clone()))
+                .map(|(k, v)| (k.to_value_key(), v.clone()))
                 .collect::<BTreeMap<ValueKey, Value>>(),
         )
     }
@@ -161,14 +161,14 @@ impl From<BTreeMap<ValueKey, Value>> for Object {
 
 impl<T> From<HashMap<T, Value>> for Object
 where
-    T: Into<ValueKey> + Clone + ValueKeyBehavior,
+    T: ValueKeyBehavior,
 {
     /// Converts BTreeMap<ValueKey, Value> into Object.
     fn from(value: HashMap<T, Value>) -> Self {
         Object::BTreeMap(
             value
                 .iter()
-                .map(|(k, v)| (k.clone().into(), v.clone()))
+                .map(|(k, v)| (k.to_value_key(), v.clone()))
                 .collect::<BTreeMap<ValueKey, Value>>(),
         )
     }
@@ -190,14 +190,14 @@ impl From<Vec<(ValueKey, Value)>> for Object {
 
 impl<T> From<Vec<(T, Value)>> for Object
 where
-    T: Into<ValueKey> + Clone + ValueKeyBehavior,
+    T: ValueKeyBehavior,
 {
     /// Converts a vector of key-value pairs into an Object.
     fn from(value: Vec<(T, Value)>) -> Self {
         Object::HashMap(
             value
                 .into_iter()
-                .map(|(k, v)| (k.clone().into(), v.clone()))
+                .map(|(k, v)| (k.to_value_key(), v.clone()))
                 .collect(),
         )
     }

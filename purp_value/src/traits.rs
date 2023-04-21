@@ -251,7 +251,6 @@ where
     }
 }
 
-
 /// A trait for converting types to JSON strings.
 pub trait ToJsonBehavior {
     /// Converts a type into a JSON string.
@@ -270,7 +269,7 @@ pub trait ToXmlBehavior {
     fn to_xml(&self) -> String;
 }
 
-pub trait ValueKeyBehavior {
+pub trait ValueKeyBehavior: Clone {
     fn to_value_key(&self) -> ValueKey;
 }
 
@@ -281,16 +280,10 @@ impl ValueKeyBehavior for String {
 }
 impl ValueKeyBehavior for u32 {
     fn to_value_key(&self) -> ValueKey {
-        ValueKey::Number(self.clone())
+        ValueKey::Number(*self as usize)
     }
 }
 impl ValueKeyBehavior for &str {
-    fn to_value_key(&self) -> ValueKey {
-        ValueKey::String(self.to_string())
-    }
-}
-
-impl ValueKeyBehavior for str {
     fn to_value_key(&self) -> ValueKey {
         ValueKey::String(self.to_string())
     }

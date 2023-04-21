@@ -88,7 +88,7 @@ mod tests {
                 "test3".to_string(),
                 Value::from(vec![Value::from(0), Value::from(1)]),
             );
-            Object::HashMap(map)
+            Object::from(map)
         });
 
         assert_eq!(Value::str_to_value(raw), Ok(compare));
