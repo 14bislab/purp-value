@@ -7,10 +7,7 @@ impl Value {
     {
         match self {
             Value::Object(object) => object.get(key),
-            Value::Array(array) => {
-                let key = key.to_value_key();
-                array.get(key.to_usize())
-            }
+            Value::Array(array) => array.get(key.as_usize()),
             _ => None,
         }
     }
@@ -21,10 +18,7 @@ impl Value {
     {
         match self {
             Value::Object(object) => object.get_mut(key),
-            Value::Array(array) => {
-                let key = key.to_value_key();
-                array.get_mut(key.to_usize())
-            }
+            Value::Array(array) => array.get_mut(key.as_usize()),
             _ => None,
         }
     }
@@ -46,6 +40,7 @@ impl Value {
         match self {
             Value::Array(array) => array.len(),
             Value::Object(object) => object.len(),
+            Value::String(string) => string.len(),
             _ => 0,
         }
     }
@@ -54,6 +49,7 @@ impl Value {
         match self {
             Value::Array(array) => array.is_empty(),
             Value::Object(object) => object.is_empty(),
+            Value::String(string) => string.is_empty(),
             _ => true,
         }
     }
@@ -659,6 +655,57 @@ impl DateTimeBehavior for Value {
 
     fn now() -> DateTime {
         DateTime::now()
+    }
+}
+
+impl StringBehavior for Value {
+    fn as_bytes(&self) -> &[u8] {
+        match self {
+            Value::String(string) => string.as_bytes(),
+            _ => &[0],
+        }
+    }
+
+    fn as_str(&self) -> &str {
+        match self {
+            Value::String(string) => string.as_str(),
+            _ => &"",
+        }
+    }
+
+    fn as_string(&self) -> String {
+        match self {
+            Value::String(string) => string.as_string(),
+            _ => "".to_string(),
+        }
+    }
+
+    fn to_uppercase(&self) -> Self {
+        todo!()
+    }
+
+    fn to_lowercase(&self) -> Self {
+        todo!()
+    }
+
+    fn trim(&self) -> Self {
+        todo!()
+    }
+
+    fn replace(&self, from: &str, to: &str) -> Self {
+        todo!()
+    }
+
+    fn concat<T: AsRef<str>>(&self, other: T) -> Self {
+        todo!()
+    }
+
+    fn as_string_lossy(&self) -> String {
+        todo!()
+    }
+
+    fn from_utf8(value: Vec<u8>) -> Self {
+        todo!()
     }
 }
 
