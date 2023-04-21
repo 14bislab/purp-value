@@ -506,9 +506,8 @@ impl ObjectBehavior for Value {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use crate::prelude::*;
+    use std::collections::HashMap;
 
     #[test]
     fn test_value_number_behavior() {
@@ -517,10 +516,13 @@ mod tests {
     }
     #[test]
     fn test_value_object_behavior() {
-        // let mut value = Value::from(HashMap::from_iter(
-        //     vec![("1".to_string(), Value::from(3.14))].into_iter(),
-        // ));
-        // value.insert("2".to_string(), 4.13);
-        // assert_eq!(value, 3.14);
+        let mut value = Value::from(HashMap::from_iter(vec![("1", 3.14.to_value())].into_iter()));
+        value.insert("2", 4.13.to_value());
+
+        if let Some(item) = value.get_mut("1") {
+            *item = 1.43.to_value();
+        }
+
+        assert_eq!(value.get("1").unwrap(), &1.43.to_value());
     }
 }
