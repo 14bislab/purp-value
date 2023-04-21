@@ -1,12 +1,12 @@
 [package]
-name = "purp-value-derive"
+name = "valu3-derive"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 readme = "readme.md"
-repository = "https://github.com/14bislab/purp-value"
-keywords = ["purp-value", "serialization", "deserialization", "serde", "purp"]
-documentation = "https://docs.rs/purp-value"
+repository = "https://github.com/14bislab/valu3"
+keywords = ["valu3", "serialization", "deserialization", "serde"]
+documentation = "https://docs.rs/valu3"
 description = "A generic serialization/deserialization/type framework"
 categories = ["encoding", "no-std"]
 
@@ -16,7 +16,7 @@ quote = "1.0.9"
 proc-macro2 = "1.0.56"
 
 [dev-dependencies]
-purp-value = { version="0.1", path = "../purp_value" }
+valu3 = { version="0.1", path = "../valu3" }
 
 [lib]
 proc-macro = true

@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, HashMap};
 
-use purp_value::prelude::*;
-use purp_value_derive::{FromValue, ToJson, ToValue, ToYaml};
+use valu3::prelude::*;
+use valu3_derive::{FromValue, ToJson, ToValue, ToYaml};
 
 #[derive(ToValue, FromValue, PartialEq, Debug, Default, Clone, ToJson, ToYaml)]
 struct Inner {
