@@ -1,5 +1,5 @@
 [workspace]
 members = [
-    "purp_value",
-    "purp_value_derive",
+    "valu3",
+    "valu3_derive",
 ]

@@ -1,12 +1,12 @@
 [package]
-name = "purp-value"
+name = "valu3"
 version = "0.1.2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 readme = "readme.md"
-repository = "https://github.com/14bislab/purp-value"
-keywords = ["value", "generic", "type", "serde", "purp"]
-documentation = "https://docs.rs/purp-value"
+repository = "https://github.com/14bislab/valu3"
+keywords = ["value", "generic", "type", "serde"]
+documentation = "https://docs.rs/valu3"
 description = "A generic serialization/deserialization/type framework"
 categories = ["encoding", "no-std"]
 
