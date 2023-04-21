@@ -40,11 +40,11 @@ pub enum Object {
 
 impl Object {
     /// Returns a reference to the value associated with the specified key, or `None` if the key is not present.
-    pub fn get<T>(&self, key: &T) -> Option<&Value>
+    pub fn get<T>(&self, key: T) -> Option<&Value>
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
-        let value_key: ValueKey = key.clone().into();
+        let value_key: ValueKey = key.to_value_key();
         match self {
             Object::BTreeMap(map) => map.get(&value_key),
             Object::HashMap(map) => map.get(&value_key),
@@ -188,13 +188,18 @@ impl From<Vec<(ValueKey, Value)>> for Object {
     }
 }
 
-impl<T> From<Vec<(ValueKey, Value)>> for Object 
+impl<T> From<Vec<(T, Value)>> for Object
 where
     T: Into<ValueKey> + Clone + ValueKeyBehavior,
-    {
+{
     /// Converts a vector of key-value pairs into an Object.
-    fn from(value: Vec<(ValueKey, Value)>) -> Self {
-        Object::HashMap(value.into_iter().collect())
+    fn from(value: Vec<(T, Value)>) -> Self {
+        Object::HashMap(
+            value
+                .into_iter()
+                .map(|(k, v)| (k.clone().into(), v.clone()))
+                .collect(),
+        )
     }
 }
 
@@ -281,7 +286,7 @@ mod tests {
 
         assert_eq!(
             results,
-            vec![("key1".to_string(), value1), ("key2".to_string(), value2)]
+            vec![("key1".to_value_key(), value1), ("key2".to_value_key(), value2)]
         );
     }
 

@@ -270,8 +270,28 @@ pub trait ToXmlBehavior {
     fn to_xml(&self) -> String;
 }
 
-pub trait ValueKeyBehavior {}
+pub trait ValueKeyBehavior {
+    fn to_value_key(&self) -> ValueKey;
+}
 
-impl ValueKeyBehavior for String {}
-impl ValueKeyBehavior for u32 {}
-impl ValueKeyBehavior for &str {}
+impl ValueKeyBehavior for String {
+    fn to_value_key(&self) -> ValueKey {
+        ValueKey::String(self.clone())
+    }
+}
+impl ValueKeyBehavior for u32 {
+    fn to_value_key(&self) -> ValueKey {
+        ValueKey::Number(self.clone())
+    }
+}
+impl ValueKeyBehavior for &str {
+    fn to_value_key(&self) -> ValueKey {
+        ValueKey::String(self.to_string())
+    }
+}
+
+impl ValueKeyBehavior for str {
+    fn to_value_key(&self) -> ValueKey {
+        ValueKey::String(self.to_string())
+    }
+}
