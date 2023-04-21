@@ -21,6 +21,43 @@ use std::fmt::{Display, Formatter};
 
 pub trait ValueTrait {}
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum ValueKey {
+    String(String),
+    Number(u32),
+}
+
+impl From<String> for ValueKey {
+    fn from(s: String) -> Self {
+        ValueKey::String(s)
+    }
+}
+
+impl From<&str> for ValueKey {
+    fn from(s: &str) -> Self {
+        ValueKey::String(s.to_string())
+    }
+}
+
+impl From<u32> for ValueKey {
+    fn from(n: u32) -> Self {
+        ValueKey::Number(n)
+    }
+}
+
+use std::iter::FromIterator;
+
+impl<'a> FromIterator<&'a ValueKey> for ValueKey {
+    fn from_iter<I: IntoIterator<Item = &'a ValueKey>>(iter: I) -> Self {
+        let mut iterator = iter.into_iter();
+        match iterator.next() {
+            Some(ValueKey::String(s)) => ValueKey::String(s.clone()),
+            Some(ValueKey::Number(n)) => ValueKey::Number(*n),
+            None => ValueKey::String(String::new()),
+        }
+    }
+}
+
 /// Represents different data types as an enum.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {

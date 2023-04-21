@@ -269,3 +269,9 @@ pub trait ToXmlBehavior {
     /// Converts a type into an XML string.
     fn to_xml(&self) -> String;
 }
+
+pub trait ValueKeyBehavior {}
+
+impl ValueKeyBehavior for String {}
+impl ValueKeyBehavior for u32 {}
+impl ValueKeyBehavior for &str {}
