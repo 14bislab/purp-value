@@ -24,7 +24,23 @@ pub trait ValueTrait {}
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ValueKey {
     String(String),
-    Number(u32),
+    Number(usize),
+}
+
+impl ValueKey {
+    pub fn to_string(&self) -> String {
+        match self {
+            ValueKey::String(s) => s.clone(),
+            ValueKey::Number(n) => n.to_string(),
+        }
+    }
+
+    pub fn to_usize(&self) -> usize {
+        match self {
+            ValueKey::String(s) => s.parse().unwrap(),
+            ValueKey::Number(n) => *n,
+        }
+    }
 }
 
 impl From<String> for ValueKey {
@@ -41,7 +57,7 @@ impl From<&str> for ValueKey {
 
 impl From<u32> for ValueKey {
     fn from(n: u32) -> Self {
-        ValueKey::Number(n)
+        ValueKey::Number(n as usize)
     }
 }
 
