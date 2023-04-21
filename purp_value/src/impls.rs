@@ -1,3 +1,5 @@
+use core::panic;
+
 use crate::prelude::*;
 
 impl Value {
@@ -8,7 +10,7 @@ impl Value {
         match self {
             Value::Object(object) => object.get(key),
             Value::Array(array) => array.get(key.as_usize()),
-            _ => None,
+            _ => panic!("Unable to get a reference to a type other than an array or object"),
         }
     }
 
@@ -19,7 +21,9 @@ impl Value {
         match self {
             Value::Object(object) => object.get_mut(key),
             Value::Array(array) => array.get_mut(key.as_usize()),
-            _ => None,
+            _ => {
+                panic!("Unable to get a mutable reference to a type other than an array or object")
+            }
         }
     }
 
@@ -32,7 +36,7 @@ impl Value {
             Value::Number(number) => {
                 number.clean();
             }
-            _ => (),
+            _ => panic!("Unable to clean a type other than an array, object or number"),
         };
     }
 
@@ -41,7 +45,7 @@ impl Value {
             Value::Array(array) => array.len(),
             Value::Object(object) => object.len(),
             Value::String(string) => string.len(),
-            _ => 0,
+            _ => panic!("Unable to get the length of a type other than an array, object or string"),
         }
     }
 
@@ -50,14 +54,14 @@ impl Value {
             Value::Array(array) => array.is_empty(),
             Value::Object(object) => object.is_empty(),
             Value::String(string) => string.is_empty(),
-            _ => true,
+            _ => panic!("Unable to check if a type other than an array, object or string is empty"),
         }
     }
 
     fn push<T: ToValueBehavior>(&mut self, value: T) {
         match self {
             Value::Array(array) => array.push(value.to_value()),
-            _ => (),
+            _ => panic!("Unable to push values ​​into a type other than an array"),
         }
     }
 
@@ -68,7 +72,7 @@ impl Value {
     {
         match self {
             Value::Object(o) => o.insert(key, value.to_value()),
-            _ => todo!(),
+            _ => panic!("Unable to insert values ​​into a type other than an object"),
         }
     }
 }
@@ -77,252 +81,252 @@ impl NumberBehavior for Value {
     fn set_u8(&mut self, value: u8) {
         match self {
             Value::Number(n) => n.set_u8(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_u16(&mut self, value: u16) {
         match self {
             Value::Number(n) => n.set_u16(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_u32(&mut self, value: u32) {
         match self {
             Value::Number(n) => n.set_u32(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_u64(&mut self, value: u64) {
         match self {
             Value::Number(n) => n.set_u64(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_u128(&mut self, value: u128) {
         match self {
             Value::Number(n) => n.set_u128(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_i8(&mut self, value: i8) {
         match self {
             Value::Number(n) => n.set_i8(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_i16(&mut self, value: i16) {
         match self {
             Value::Number(n) => n.set_i16(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_i32(&mut self, value: i32) {
         match self {
             Value::Number(n) => n.set_i32(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_i64(&mut self, value: i64) {
         match self {
             Value::Number(n) => n.set_i64(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_i128(&mut self, value: i128) {
         match self {
             Value::Number(n) => n.set_i128(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_f32(&mut self, value: f32) {
         match self {
             Value::Number(n) => n.set_f32(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn set_f64(&mut self, value: f64) {
         match self {
             Value::Number(n) => n.set_f64(value),
-            _ => (),
+            _ => panic!("Unable to set a value other than a number"),
         }
     }
 
     fn get_u8(&self) -> Option<u8> {
         match self {
             Value::Number(n) => n.get_u8(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u16(&self) -> Option<u16> {
         match self {
             Value::Number(n) => n.get_u16(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u32(&self) -> Option<u32> {
         match self {
             Value::Number(n) => n.get_u32(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u64(&self) -> Option<u64> {
         match self {
             Value::Number(n) => n.get_u64(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u128(&self) -> Option<u128> {
         match self {
             Value::Number(n) => n.get_u128(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i8(&self) -> Option<i8> {
         match self {
             Value::Number(n) => n.get_i8(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i16(&self) -> Option<i16> {
         match self {
             Value::Number(n) => n.get_i16(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i32(&self) -> Option<i32> {
         match self {
             Value::Number(n) => n.get_i32(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i64(&self) -> Option<i64> {
         match self {
             Value::Number(n) => n.get_i64(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i128(&self) -> Option<i128> {
         match self {
             Value::Number(n) => n.get_i128(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_f32(&self) -> Option<f32> {
         match self {
             Value::Number(n) => n.get_f32(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_f64(&self) -> Option<f64> {
         match self {
             Value::Number(n) => n.get_f64(),
-            _ => None,
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u8_unsafe(&self) -> u8 {
         match self {
             Value::Number(n) => n.get_u8_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u16_unsafe(&self) -> u16 {
         match self {
             Value::Number(n) => n.get_u16_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u32_unsafe(&self) -> u32 {
         match self {
             Value::Number(n) => n.get_u32_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u64_unsafe(&self) -> u64 {
         match self {
             Value::Number(n) => n.get_u64_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_u128_unsafe(&self) -> u128 {
         match self {
             Value::Number(n) => n.get_u128_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i8_unsafe(&self) -> i8 {
         match self {
             Value::Number(n) => n.get_i8_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i16_unsafe(&self) -> i16 {
         match self {
             Value::Number(n) => n.get_i16_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i32_unsafe(&self) -> i32 {
         match self {
             Value::Number(n) => n.get_i32_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i64_unsafe(&self) -> i64 {
         match self {
             Value::Number(n) => n.get_i64_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_i128_unsafe(&self) -> i128 {
         match self {
             Value::Number(n) => n.get_i128_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_f32_unsafe(&self) -> f32 {
         match self {
             Value::Number(n) => n.get_f32_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
     fn get_f64_unsafe(&self) -> f64 {
         match self {
             Value::Number(n) => n.get_f64_unsafe(),
-            _ => todo!(),
+            _ => panic!("Unable to get a value other than a number"),
         }
     }
 
@@ -481,7 +485,7 @@ impl ObjectBehavior for Value {
     {
         match self {
             Value::Object(o) => o.remove(key),
-            _ => todo!(),
+            _ => panic!("Unable to remove a value other than an object"),
         }
     }
 
@@ -491,21 +495,21 @@ impl ObjectBehavior for Value {
     {
         match self {
             Value::Object(o) => o.contains_key(key),
-            _ => todo!(),
+            _ => panic!("Unable to remove a value other than an object"),
         }
     }
 
     fn keys(&self) -> Vec<&ValueKey> {
         match self {
             Value::Object(o) => o.keys(),
-            _ => todo!(),
+            _ => panic!("Unable to remove a value other than an object"),
         }
     }
 
     fn values(&self) -> Vec<&Value> {
         match self {
             Value::Object(o) => o.values(),
-            _ => todo!(),
+            _ => panic!("Unable to remove a value other than an object"),
         }
     }
 }
@@ -514,7 +518,7 @@ impl ArrayBehavior for Value {
     fn pop(&mut self) -> Option<Value> {
         match self {
             Value::Array(array) => array.pop(),
-            _ => None,
+            _ => panic!("Unable to pop a value other than an array"),
         }
     }
 }
@@ -523,91 +527,91 @@ impl DateTimeBehavior for Value {
     fn as_date(&self) -> Option<&chrono::NaiveDate> {
         match self {
             Value::DateTime(datetime) => datetime.as_date(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn as_time(&self) -> Option<&chrono::NaiveTime> {
         match self {
             Value::DateTime(datetime) => datetime.as_time(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn as_date_time(&self) -> Option<&chrono::DateTime<chrono::Utc>> {
         match self {
             Value::DateTime(datetime) => datetime.as_date_time(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn year(&self) -> Option<i32> {
         match self {
             Value::DateTime(datetime) => datetime.year(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn month(&self) -> Option<u32> {
         match self {
             Value::DateTime(datetime) => datetime.month(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn day(&self) -> Option<u32> {
         match self {
             Value::DateTime(datetime) => datetime.day(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn hour(&self) -> Option<u32> {
         match self {
             Value::DateTime(datetime) => datetime.hour(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn minute(&self) -> Option<u32> {
         match self {
             Value::DateTime(datetime) => datetime.minute(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn second(&self) -> Option<u32> {
         match self {
             Value::DateTime(datetime) => datetime.second(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn timestamp(&self) -> Option<i64> {
         match self {
             Value::DateTime(datetime) => datetime.timestamp(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn timezone(&self) -> Option<chrono::Utc> {
         match self {
             Value::DateTime(datetime) => datetime.timezone(),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn to_iso8601(&self) -> String {
         match self {
             Value::DateTime(datetime) => datetime.to_iso8601(),
-            _ => "".to_string(),
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn to_rfc3339(&self) -> String {
         match self {
             Value::DateTime(datetime) => datetime.to_rfc3339(),
-            _ => "".to_string(),
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
@@ -620,7 +624,7 @@ impl DateTimeBehavior for Value {
                 Some(datetime) => Some(datetime.to_value()),
                 None => None,
             },
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
@@ -633,14 +637,14 @@ impl DateTimeBehavior for Value {
                 Some(datetime) => Some(datetime.to_value()),
                 None => None,
             },
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
     fn duration_between(&self, other: &Self) -> Option<chrono::Duration> {
         match self {
             Value::DateTime(datetime) => datetime.duration_between(&DateTime::from(other.clone())),
-            _ => None,
+            _ => panic!("Unable to get a date from a value other than a datetime"),
         }
     }
 
@@ -661,14 +665,14 @@ impl StringBehavior for Value {
     fn as_bytes(&self) -> &[u8] {
         match self {
             Value::String(string) => string.as_bytes(),
-            _ => &[0],
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
     fn as_str(&self) -> &str {
         match self {
             Value::String(string) => string.as_str(),
-            _ => &"",
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
@@ -676,7 +680,7 @@ impl StringBehavior for Value {
     fn as_string(&self) -> CString {
         match self {
             Value::String(string) => string.as_string(),
-            _ => StringB::default().as_string(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
@@ -684,42 +688,42 @@ impl StringBehavior for Value {
     fn as_string(&self) -> String {
         match self {
             Value::String(string) => string.as_string(),
-            _ => StringB::default().as_string(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
     fn to_uppercase(&self) -> Self {
         match self {
             Value::String(string) => string.to_uppercase().to_value(),
-            _ => StringB::default().to_value(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
     fn to_lowercase(&self) -> Self {
         match self {
             Value::String(string) => string.to_lowercase().to_value(),
-            _ => StringB::default().to_value(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
     fn trim(&self) -> Self {
         match self {
             Value::String(string) => string.trim().to_value(),
-            _ => StringB::default().to_value(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
     fn replace(&self, from: &str, to: &str) -> Self {
         match self {
             Value::String(string) => string.replace(from, to).to_value(),
-            _ => StringB::default().to_value(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
     fn concat<T: AsRef<str>>(&self, other: T) -> Self {
         match self {
             Value::String(string) => string.concat(other).to_value(),
-            _ => StringB::default().to_value(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
@@ -727,7 +731,7 @@ impl StringBehavior for Value {
     fn as_string_lossy(&self) -> CString {
         match self {
             Value::String(string) => string.as_string_lossy(),
-            _ => StringB::default().as_string(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
@@ -735,7 +739,7 @@ impl StringBehavior for Value {
     fn as_string_lossy(&self) -> String {
         match self {
             Value::String(string) => string.as_string_lossy(),
-            _ => StringB::default().as_string(),
+            _ => panic!("Unable to get a string from a value other than a string"),
         }
     }
 
