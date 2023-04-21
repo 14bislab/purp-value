@@ -1,13 +1,28 @@
 use crate::prelude::*;
 
 impl Value {
-    // fn clean(&mut self) {
-    //     match self {
-    //         Value::Object(obj) => obj.clean(),
-    //         Value::Array(arr) => arr.clean(),
-    //         _ => (),
-    //     }
-    // }
+    pub fn get<T>(&self, key: T) -> Option<&Value>
+    where
+        T: ValueKeyBehavior,
+    {
+        match self {
+            Value::Object(object) => object.get(key),
+            _ => None,
+        }
+    }
+
+    pub fn clean(&mut self) {
+        match self {
+            // Value::Array(array) => array.clean(),
+            Value::Object(object) => {
+                object.clean();
+            }
+            Value::Number(number) => {
+                number.clean();
+            }
+            _ => (),
+        };
+    }
 }
 
 impl NumberBehavior for Value {
@@ -414,7 +429,7 @@ impl NumberBehavior for Value {
 impl ObjectBehavior for Value {
     fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
         match self {
             Value::Object(o) => o.insert(key, value),
@@ -424,7 +439,7 @@ impl ObjectBehavior for Value {
 
     fn remove<T>(&mut self, key: &T) -> Option<Value>
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
         match self {
             Value::Object(o) => o.remove(key),
@@ -434,7 +449,7 @@ impl ObjectBehavior for Value {
 
     fn contains_key<T>(&self, key: &T) -> bool
     where
-        T: Into<ValueKey> + Clone,
+        T: ValueKeyBehavior,
     {
         match self {
             Value::Object(o) => o.contains_key(key),

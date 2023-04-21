@@ -204,7 +204,7 @@ impl<K: AsRef<str>, V: Into<Value>> From<HashMap<K, V>> for Array {
             .map(|(k, v)| {
                 let mut object_map = HashMap::new();
                 object_map.insert(k.as_ref().to_string(), v.into());
-                Value::Object(Object::HashMap(object_map))
+                Value::Object(Object::from(object_map))
             })
             .collect();
         Self { values }
@@ -218,7 +218,7 @@ impl<K: AsRef<str>, V: Into<Value>> From<BTreeMap<K, V>> for Array {
             .map(|(k, v)| {
                 let mut object_map = BTreeMap::new();
                 object_map.insert(k.as_ref().to_string(), v.into());
-                Value::Object(Object::BTreeMap(object_map))
+                Value::Object(Object::from(object_map))
             })
             .collect();
         Self { values }

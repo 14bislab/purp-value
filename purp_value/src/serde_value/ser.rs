@@ -13,7 +13,7 @@ impl Serialize for Value {
                 use serde::ser::SerializeMap;
                 let mut map = serializer.serialize_map(Some(value.len()))?;
                 for (k, v) in value.iter() {
-                    map.serialize_entry(&k, &v)?;
+                    map.serialize_entry(&k.to_string(), &v)?;
                 }
                 map.end()
             }

@@ -128,7 +128,7 @@ impl<'de> Deserialize<'de> for Value {
             where
                 A: de::MapAccess<'de>,
             {
-                let mut map = HashMap::default();
+                let mut map: HashMap<String, Value> = HashMap::default();
 
                 while let Some((key, value)) = access.next_entry()? {
                     map.insert(key, value);
