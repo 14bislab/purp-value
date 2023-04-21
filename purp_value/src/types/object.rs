@@ -51,6 +51,17 @@ impl Object {
         }
     }
 
+    pub fn get_mut<T>(&mut self, key: T) -> Option<&mut Value>
+    where
+        T: ValueKeyBehavior,
+    {
+        let value_key: ValueKey = key.to_value_key();
+        match self {
+            Object::BTreeMap(map) => map.get_mut(&value_key),
+            Object::HashMap(map) => map.get_mut(&value_key),
+        }
+    }
+
     /// Removes all key-value pairs from the object.
     pub fn clean(&mut self) {
         match self {
