@@ -1,7 +1,12 @@
+#[cfg(feature = "cstring")]
+use std::ffi::CString;
 pub trait ValueTrait {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ValueKey {
+    #[cfg(feature = "cstring")]
+    String(CString),
+    #[cfg(not(feature = "cstring"))]
     String(String),
     Number(usize),
 }
@@ -49,7 +54,10 @@ impl From<u32> for ValueKey {
     }
 }
 
-use std::{iter::FromIterator, fmt::{Formatter, Display}};
+use std::{
+    fmt::{Display, Formatter},
+    iter::FromIterator,
+};
 
 impl<'a> FromIterator<&'a ValueKey> for ValueKey {
     fn from_iter<I: IntoIterator<Item = &'a ValueKey>>(iter: I) -> Self {

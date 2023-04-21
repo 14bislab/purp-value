@@ -41,26 +41,6 @@ pub trait StringBehavior {
     /// ```
     fn as_string(&self) -> String;
 
-    /// Gets the length of the string.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("hello");
-    /// assert_eq!(s.len(), 5);
-    /// ```
-    fn len(&self) -> usize;
-
-    /// Returns `true` if the string is empty.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// let s = StringB::new("");
-    /// assert!(s.is_empty());
-    /// ```
-    fn is_empty(&self) -> bool;
-
     /// Converts the string to uppercase.
     ///
     /// # Examples
@@ -159,6 +139,14 @@ impl StringB {
             value: value.into(),
         }
     }
+
+    pub fn len(&self) -> usize {
+        self.as_bytes().len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl StringBehavior for StringB {
@@ -187,14 +175,6 @@ impl StringBehavior for StringB {
 
     fn as_string(&self) -> String {
         self.value.clone()
-    }
-
-    fn len(&self) -> usize {
-        self.as_bytes().len()
-    }
-
-    fn is_empty(&self) -> bool {
-        self.len() == 0
     }
 
     fn to_uppercase(&self) -> Self {

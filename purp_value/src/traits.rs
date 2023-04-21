@@ -271,6 +271,14 @@ pub trait ToXmlBehavior {
 
 pub trait ValueKeyBehavior: Clone {
     fn to_value_key(&self) -> ValueKey;
+
+    fn as_usize(&self) -> usize {
+        0
+    }
+
+    fn is_usize() -> bool {
+        false
+    }
 }
 
 impl ValueKeyBehavior for String {
@@ -278,9 +286,17 @@ impl ValueKeyBehavior for String {
         ValueKey::String(self.clone())
     }
 }
-impl ValueKeyBehavior for u32 {
+impl ValueKeyBehavior for usize {
     fn to_value_key(&self) -> ValueKey {
-        ValueKey::Number(*self as usize)
+        ValueKey::Number(*self)
+    }
+
+    fn as_usize(&self) -> usize {
+        *self
+    }
+
+    fn is_usize() -> bool {
+        true
     }
 }
 impl ValueKeyBehavior for &str {
