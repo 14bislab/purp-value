@@ -1,6 +1,8 @@
-use chrono::{
-    DateTime as ChDateTime, Datelike, Duration, LocalResult, NaiveDate, NaiveTime, Timelike, Utc,
+pub use chrono::{
+    DateTime as ChDateTime, Datelike, Duration, LocalResult, NaiveDate, NaiveTime, TimeZone,
+    Timelike, Utc, self
 };
+
 use std::fmt::{Display, Formatter};
 
 pub trait DateTimeBehavior {
@@ -23,15 +25,22 @@ pub trait DateTimeBehavior {
     fn to_rfc3339(&self) -> String;
 
     // Methods for adding or subtracting a Duration to/from a DateTime value
-    fn add_duration(&self, duration: Duration) -> Option<Self>
+    fn add_duration(&self, duration: Duration) -> Option<DateTime>
     where
         Self: Sized;
-    fn subtract_duration(&self, duration: Duration) -> Option<Self>
+    fn subtract_duration(&self, duration: Duration) -> Option<DateTime>
     where
         Self: Sized;
 
     // Method for calculating the duration between two DateTime values
-    fn duration_between(&self, other: &Self) -> Option<Duration>;
+    fn duration_between(&self, other: &DateTime) -> Option<Duration>;
+
+    fn from_ymd_opt(year: i32, month: u32, day: u32) -> DateTime;
+
+    fn with_ymd_and_hms(year: i32, month: u32, day: u32, hour: u32, min: u32, sec: u32)
+        -> DateTime;
+
+    fn now() -> DateTime;
 }
 
 /// Enum representing a date, time, or date-time value.
@@ -242,6 +251,28 @@ impl DateTimeBehavior for DateTime {
             _ => None, // Retornar None para combinações inválidas
         }
     }
+
+    fn from_ymd_opt(year: i32, month: u32, day: u32) -> DateTime {
+        let date = NaiveDate::from_ymd_opt(year, month, day).unwrap();
+        DateTime::from(date)
+    }
+
+    fn with_ymd_and_hms(
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+        min: u32,
+        sec: u32,
+    ) -> DateTime {
+        let datetime: chrono::LocalResult<chrono::DateTime<Utc>> =
+            Utc.with_ymd_and_hms(year, month, day, hour, min, sec);
+        DateTime::from(datetime)
+    }
+
+    fn now() -> DateTime {
+        DateTime::from(Utc::now())
+    }
 }
 
 #[cfg(test)]
@@ -251,11 +282,8 @@ mod tests {
 
     #[test]
     fn test_add_duration() {
-        let date = NaiveDate::from_ymd_opt(2023, 4, 5).unwrap();
-        let datetime = Utc.with_ymd_and_hms(2023, 4, 5, 12, 34, 56);
-
-        let dt_date = DateTime::from(date);
-        let dt_datetime = DateTime::from(datetime);
+        let dt_date = DateTime::from_ymd_opt(2023, 4, 5);
+        let dt_datetime = DateTime::with_ymd_and_hms(2023, 4, 5, 12, 34, 56);
 
         assert_eq!(
             dt_date.add_duration(Duration::days(1)),

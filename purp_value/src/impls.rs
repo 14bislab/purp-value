@@ -31,7 +31,7 @@ impl Value {
 
     pub fn clean(&mut self) {
         match self {
-            // Value::Array(array) => array.clean(),
+            Value::Array(array) => array.clean(),
             Value::Object(object) => {
                 object.clean();
             }
@@ -40,6 +40,40 @@ impl Value {
             }
             _ => (),
         };
+    }
+
+    fn len(&self) -> usize {
+        match self {
+            Value::Array(array) => array.len(),
+            Value::Object(object) => object.len(),
+            _ => 0,
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        match self {
+            Value::Array(array) => array.is_empty(),
+            Value::Object(object) => object.is_empty(),
+            _ => true,
+        }
+    }
+
+    fn push<T: ToValueBehavior>(&mut self, value: T) {
+        match self {
+            Value::Array(array) => array.push(value.to_value()),
+            _ => (),
+        }
+    }
+
+    fn insert<T, V>(&mut self, key: T, value: V) -> Option<Value>
+    where
+        T: ValueKeyBehavior,
+        V: ToValueBehavior,
+    {
+        match self {
+            Value::Object(o) => o.insert(key, value.to_value()),
+            _ => todo!(),
+        }
     }
 }
 
@@ -445,16 +479,6 @@ impl NumberBehavior for Value {
 }
 
 impl ObjectBehavior for Value {
-    fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
-    where
-        T: ValueKeyBehavior,
-    {
-        match self {
-            Value::Object(o) => o.insert(key, value),
-            _ => todo!(),
-        }
-    }
-
     fn remove<T>(&mut self, key: &T) -> Option<Value>
     where
         T: ValueKeyBehavior,
@@ -488,19 +512,153 @@ impl ObjectBehavior for Value {
             _ => todo!(),
         }
     }
+}
 
-    fn len(&self) -> usize {
+impl ArrayBehavior for Value {
+    fn pop(&mut self) -> Option<Value> {
         match self {
-            Value::Object(o) => o.len(),
-            _ => todo!(),
+            Value::Array(array) => array.pop(),
+            _ => None,
+        }
+    }
+}
+
+impl DateTimeBehavior for Value {
+    fn as_date(&self) -> Option<&chrono::NaiveDate> {
+        match self {
+            Value::DateTime(datetime) => datetime.as_date(),
+            _ => None,
         }
     }
 
-    fn is_empty(&self) -> bool {
+    fn as_time(&self) -> Option<&chrono::NaiveTime> {
         match self {
-            Value::Object(o) => o.is_empty(),
-            _ => todo!(),
+            Value::DateTime(datetime) => datetime.as_time(),
+            _ => None,
         }
+    }
+
+    fn as_date_time(&self) -> Option<&chrono::DateTime<chrono::Utc>> {
+        match self {
+            Value::DateTime(datetime) => datetime.as_date_time(),
+            _ => None,
+        }
+    }
+
+    fn year(&self) -> Option<i32> {
+        match self {
+            Value::DateTime(datetime) => datetime.year(),
+            _ => None,
+        }
+    }
+
+    fn month(&self) -> Option<u32> {
+        match self {
+            Value::DateTime(datetime) => datetime.month(),
+            _ => None,
+        }
+    }
+
+    fn day(&self) -> Option<u32> {
+        match self {
+            Value::DateTime(datetime) => datetime.day(),
+            _ => None,
+        }
+    }
+
+    fn hour(&self) -> Option<u32> {
+        match self {
+            Value::DateTime(datetime) => datetime.hour(),
+            _ => None,
+        }
+    }
+
+    fn minute(&self) -> Option<u32> {
+        match self {
+            Value::DateTime(datetime) => datetime.minute(),
+            _ => None,
+        }
+    }
+
+    fn second(&self) -> Option<u32> {
+        match self {
+            Value::DateTime(datetime) => datetime.second(),
+            _ => None,
+        }
+    }
+
+    fn timestamp(&self) -> Option<i64> {
+        match self {
+            Value::DateTime(datetime) => datetime.timestamp(),
+            _ => None,
+        }
+    }
+
+    fn timezone(&self) -> Option<chrono::Utc> {
+        match self {
+            Value::DateTime(datetime) => datetime.timezone(),
+            _ => None,
+        }
+    }
+
+    fn to_iso8601(&self) -> String {
+        match self {
+            Value::DateTime(datetime) => datetime.to_iso8601(),
+            _ => "".to_string(),
+        }
+    }
+
+    fn to_rfc3339(&self) -> String {
+        match self {
+            Value::DateTime(datetime) => datetime.to_rfc3339(),
+            _ => "".to_string(),
+        }
+    }
+
+    fn add_duration(&self, duration: chrono::Duration) -> Option<DateTime>
+    where
+        Self: Sized,
+    {
+        match self {
+            Value::DateTime(datetime) => datetime.add_duration(duration),
+            _ => None,
+        }
+    }
+
+    fn subtract_duration(&self, duration: chrono::Duration) -> Option<DateTime>
+    where
+        Self: Sized,
+    {
+        match self {
+            Value::DateTime(datetime) => datetime.subtract_duration(duration),
+            _ => None,
+        }
+    }
+
+    fn duration_between(&self, other: &DateTime) -> Option<chrono::Duration> {
+        match self {
+            Value::DateTime(datetime) => datetime.duration_between(other),
+            _ => None,
+        }
+    }
+
+    fn from_ymd_opt(year: i32, month: u32, day: u32) -> DateTime {
+        DateTime::from_ymd_opt(year, month, day)
+    }
+
+    fn with_ymd_and_hms(
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+        min: u32,
+        sec: u32,
+    ) -> DateTime {
+        DateTime::with_ymd_and_hms(year, month, day, hour, min, sec)
+    }
+
+    fn now() -> DateTime {
+        DateTime::now()
     }
 }
 
@@ -514,15 +672,43 @@ mod tests {
         let value = Value::from(3.14);
         assert_eq!(value.get_f64_unsafe(), 3.14);
     }
+
     #[test]
     fn test_value_object_behavior() {
         let mut value = Value::from(HashMap::from_iter(vec![("1", 3.14.to_value())].into_iter()));
-        value.insert("2", 4.13.to_value());
+        value.insert("2", 4.13);
 
         if let Some(item) = value.get_mut("1") {
             *item = 1.43.to_value();
         }
 
         assert_eq!(value.get("1").unwrap(), &1.43.to_value());
+    }
+
+    #[test]
+    fn test_value_array_behavior() {
+        let mut value = Value::from(vec![1, 2, 3]);
+        value.push(4);
+
+        if let Some(item) = value.get_mut("1") {
+            *item = 1.43.to_value();
+        }
+
+        assert_eq!(value.get("1").unwrap(), &1.43.to_value());
+    }
+
+    #[test]
+    fn test_value_datetime_behavior() {
+        let dt_date = Value::from_ymd_opt(2023, 4, 5);
+        let dt_datetime = Value::with_ymd_and_hms(2023, 4, 5, 12, 34, 56);
+
+        assert_eq!(
+            dt_date.add_duration(Duration::days(1)),
+            Some(DateTime::from(NaiveDate::from_ymd_opt(2023, 4, 6).unwrap()))
+        );
+        assert_eq!(
+            dt_datetime.add_duration(Duration::days(1)),
+            Some(DateTime::from(Utc.with_ymd_and_hms(2023, 4, 6, 12, 34, 56)))
+        );
     }
 }

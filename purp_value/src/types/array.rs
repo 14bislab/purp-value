@@ -3,23 +3,6 @@ use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Debug, Display, Formatter};
 
 pub trait ArrayBehavior {
-    /// Appends a value to the end of the array.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use my_crate::{Array, Value};
-    ///
-    /// let mut array = Array::new();
-    /// array.push(Value::from(42));
-    /// array.push(Value::from("hello"));
-    ///
-    /// assert_eq!(array.len(), 2);
-    /// assert_eq!(array.get(0), Some(&Value::from(42)));
-    /// assert_eq!(array.get(1), Some(&Value::from("hello")));
-    /// ```
-    fn push(&mut self, value: Value);
-
     /// Removes the last element from the array and returns it, or `None` if the array is empty.
     ///
     /// # Examples
@@ -38,37 +21,6 @@ pub trait ArrayBehavior {
     /// assert_eq!(empty_popped_value, None);
     /// ```
     fn pop(&mut self) -> Option<Value>;
-
-    /// Returns the number of elements in the array.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use my_crate::{Array, Value};
-    ///
-    /// let mut array = Array::new();
-    /// assert_eq!(array.len(), 0);
-    ///
-    /// array.push(Value::from(42));
-    /// assert_eq!(array.len(), 1);
-    /// ```
-    fn len(&self) -> usize;
-
-    /// Returns `true` if the array contains no elements.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use my_crate::{Array, Value};
-    ///
-    /// let empty_array = Array::new();
-    /// assert!(empty_array.is_empty());
-    ///
-    /// let mut array = Array::new();
-    /// array.push(Value::from(42));
-    /// assert!(!array.is_empty());
-    /// ```
-    fn is_empty(&self) -> bool;
 }
 
 /// Represents an array of `Value`s.
@@ -101,6 +53,37 @@ impl Array {
     pub fn get_mut(&mut self, index: usize) -> Option<&mut Value> {
         self.values.get_mut(index)
     }
+
+    pub fn clean(&mut self) {
+        self.values = Vec::new();
+    }
+
+    /// Appends a value to the end of the array.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use my_crate::{Array, Value};
+    ///
+    /// let mut array = Array::new();
+    /// array.push(Value::from(42));
+    /// array.push(Value::from("hello"));
+    ///
+    /// assert_eq!(array.len(), 2);
+    /// assert_eq!(array.get(0), Some(&Value::from(42)));
+    /// assert_eq!(array.get(1), Some(&Value::from("hello")));
+    /// ```
+    pub fn push(&mut self, value: Value) {
+        self.values.push(value);
+    }
+
+    pub fn len(&self) -> usize {
+        self.values.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
 }
 
 impl ToValueBehavior for Array {
@@ -110,20 +93,8 @@ impl ToValueBehavior for Array {
 }
 
 impl ArrayBehavior for Array {
-    fn push(&mut self, value: Value) {
-        self.values.push(value);
-    }
-
     fn pop(&mut self) -> Option<Value> {
         self.values.pop()
-    }
-
-    fn len(&self) -> usize {
-        self.values.len()
-    }
-
-    fn is_empty(&self) -> bool {
-        self.values.is_empty()
     }
 }
 
