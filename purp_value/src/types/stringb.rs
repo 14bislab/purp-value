@@ -105,7 +105,7 @@ pub trait StringBehavior {
 }
 
 /// A custom string implementation with additional manipulation methods.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct StringB {
     #[cfg(feature = "cstring")]
     pub value: CString,
@@ -150,11 +150,6 @@ impl StringB {
 }
 
 impl StringBehavior for StringB {
-    #[cfg(feature = "cstring")]
-    fn as_bytes(&self) -> &[u8] {
-        self.value.to_bytes()
-    }
-
     fn as_bytes(&self) -> &[u8] {
         self.value.as_bytes()
     }
@@ -164,6 +159,7 @@ impl StringBehavior for StringB {
         self.value.to_str().expect("CString is not valid UTF-8")
     }
 
+    #[cfg(not(feature = "cstring"))]
     fn as_str(&self) -> &str {
         self.value.as_str()
     }
@@ -173,6 +169,7 @@ impl StringBehavior for StringB {
         self.as_str().as_string()
     }
 
+    #[cfg(not(feature = "cstring"))]
     fn as_string(&self) -> String {
         self.value.clone()
     }
@@ -208,10 +205,12 @@ impl StringBehavior for StringB {
         self.value.as_string_lossy().into_owned()
     }
 
+    #[cfg(not(feature = "cstring"))]
     fn as_string_lossy(&self) -> String {
         self.value.clone()
     }
 
+    #[cfg(not(feature = "cstring"))]
     fn from_utf8(value: Vec<u8>) -> Self {
         StringB::new(String::from_utf8(value).unwrap())
     }

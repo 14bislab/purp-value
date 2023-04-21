@@ -1,8 +1,8 @@
+use crate::prelude::*;
 pub use chrono::{
-    DateTime as ChDateTime, Datelike, Duration, LocalResult, NaiveDate, NaiveTime, TimeZone,
-    Timelike, Utc, self
+    self, DateTime as ChDateTime, Datelike, Duration, LocalResult, NaiveDate, NaiveTime, TimeZone,
+    Timelike, Utc,
 };
-
 use std::fmt::{Display, Formatter};
 
 pub trait DateTimeBehavior {
@@ -25,22 +25,21 @@ pub trait DateTimeBehavior {
     fn to_rfc3339(&self) -> String;
 
     // Methods for adding or subtracting a Duration to/from a DateTime value
-    fn add_duration(&self, duration: Duration) -> Option<DateTime>
+    fn add_duration(&self, duration: Duration) -> Option<Self>
     where
         Self: Sized;
-    fn subtract_duration(&self, duration: Duration) -> Option<DateTime>
+    fn subtract_duration(&self, duration: Duration) -> Option<Self>
     where
         Self: Sized;
 
     // Method for calculating the duration between two DateTime values
-    fn duration_between(&self, other: &DateTime) -> Option<Duration>;
+    fn duration_between(&self, other: &Self) -> Option<Duration>;
 
-    fn from_ymd_opt(year: i32, month: u32, day: u32) -> DateTime;
+    fn from_ymd_opt(year: i32, month: u32, day: u32) -> Self;
 
-    fn with_ymd_and_hms(year: i32, month: u32, day: u32, hour: u32, min: u32, sec: u32)
-        -> DateTime;
+    fn with_ymd_and_hms(year: i32, month: u32, day: u32, hour: u32, min: u32, sec: u32) -> Self;
 
-    fn now() -> DateTime;
+    fn now() -> Self;
 }
 
 /// Enum representing a date, time, or date-time value.
@@ -57,10 +56,25 @@ pub enum DateTime {
     DateTime(ChDateTime<chrono::Utc>),
 }
 
+impl ToValueBehavior for DateTime {
+    fn to_value(&self) -> Value {
+        Value::DateTime(self.clone())
+    }
+}
+
 // Implementations of From trait to allow conversion from NaiveDate, NaiveTime, and ChDateTime<Utc>
 impl From<NaiveDate> for DateTime {
     fn from(value: NaiveDate) -> Self {
         DateTime::Date(value)
+    }
+}
+
+impl From<Value> for DateTime {
+    fn from(value: Value) -> Self {
+        match value {
+            Value::DateTime(datetime) => datetime,
+            _ => panic!("Cannot convert value to DateTime"),
+        }
     }
 }
 

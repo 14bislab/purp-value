@@ -10,3 +10,5 @@ pub use crate::to::yaml::*;
 pub use crate::value::*;
 pub use crate::Error;
 pub use crate::impls::*;
+#[cfg(feature = "cstring")]
+use std::ffi::CString;

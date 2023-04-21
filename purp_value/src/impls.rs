@@ -611,50 +611,49 @@ impl DateTimeBehavior for Value {
         }
     }
 
-    fn add_duration(&self, duration: chrono::Duration) -> Option<DateTime>
+    fn add_duration(&self, duration: chrono::Duration) -> Option<Self>
     where
         Self: Sized,
     {
         match self {
-            Value::DateTime(datetime) => datetime.add_duration(duration),
+            Value::DateTime(datetime) => match datetime.add_duration(duration) {
+                Some(datetime) => Some(datetime.to_value()),
+                None => None,
+            },
             _ => None,
         }
     }
 
-    fn subtract_duration(&self, duration: chrono::Duration) -> Option<DateTime>
+    fn subtract_duration(&self, duration: chrono::Duration) -> Option<Self>
     where
         Self: Sized,
     {
         match self {
-            Value::DateTime(datetime) => datetime.subtract_duration(duration),
+            Value::DateTime(datetime) => match datetime.subtract_duration(duration) {
+                Some(datetime) => Some(datetime.to_value()),
+                None => None,
+            },
             _ => None,
         }
     }
 
-    fn duration_between(&self, other: &DateTime) -> Option<chrono::Duration> {
+    fn duration_between(&self, other: &Self) -> Option<chrono::Duration> {
         match self {
-            Value::DateTime(datetime) => datetime.duration_between(other),
+            Value::DateTime(datetime) => datetime.duration_between(&DateTime::from(other.clone())),
             _ => None,
         }
     }
 
-    fn from_ymd_opt(year: i32, month: u32, day: u32) -> DateTime {
-        DateTime::from_ymd_opt(year, month, day)
+    fn from_ymd_opt(year: i32, month: u32, day: u32) -> Self {
+        DateTime::from_ymd_opt(year, month, day).to_value()
     }
 
-    fn with_ymd_and_hms(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        min: u32,
-        sec: u32,
-    ) -> DateTime {
-        DateTime::with_ymd_and_hms(year, month, day, hour, min, sec)
+    fn with_ymd_and_hms(year: i32, month: u32, day: u32, hour: u32, min: u32, sec: u32) -> Self {
+        DateTime::with_ymd_and_hms(year, month, day, hour, min, sec).to_value()
     }
 
-    fn now() -> DateTime {
-        DateTime::now()
+    fn now() -> Self {
+        DateTime::now().to_value()
     }
 }
 
@@ -673,39 +672,75 @@ impl StringBehavior for Value {
         }
     }
 
+    #[cfg(feature = "cstring")]
+    fn as_string(&self) -> CString {
+        match self {
+            Value::String(string) => string.as_string(),
+            _ => StringB::default().as_string(),
+        }
+    }
+
+    #[cfg(not(feature = "cstring"))]
     fn as_string(&self) -> String {
         match self {
             Value::String(string) => string.as_string(),
-            _ => "".to_string(),
+            _ => StringB::default().as_string(),
         }
     }
 
     fn to_uppercase(&self) -> Self {
-        todo!()
+        match self {
+            Value::String(string) => string.to_uppercase().to_value(),
+            _ => StringB::default().to_value(),
+        }
     }
 
     fn to_lowercase(&self) -> Self {
-        todo!()
+        match self {
+            Value::String(string) => string.to_lowercase().to_value(),
+            _ => StringB::default().to_value(),
+        }
     }
 
     fn trim(&self) -> Self {
-        todo!()
+        match self {
+            Value::String(string) => string.trim().to_value(),
+            _ => StringB::default().to_value(),
+        }
     }
 
     fn replace(&self, from: &str, to: &str) -> Self {
-        todo!()
+        match self {
+            Value::String(string) => string.replace(from, to).to_value(),
+            _ => StringB::default().to_value(),
+        }
     }
 
     fn concat<T: AsRef<str>>(&self, other: T) -> Self {
-        todo!()
+        match self {
+            Value::String(string) => string.concat(other).to_value(),
+            _ => StringB::default().to_value(),
+        }
     }
 
+    #[cfg(feature = "cstring")]
+    fn as_string_lossy(&self) -> CString {
+        match self {
+            Value::String(string) => string.as_string_lossy(),
+            _ => StringB::default().as_string(),
+        }
+    }
+
+    #[cfg(not(feature = "cstring"))]
     fn as_string_lossy(&self) -> String {
-        todo!()
+        match self {
+            Value::String(string) => string.as_string_lossy(),
+            _ => StringB::default().as_string(),
+        }
     }
 
     fn from_utf8(value: Vec<u8>) -> Self {
-        todo!()
+        StringB::from_utf8(value).to_value()
     }
 }
 
@@ -751,11 +786,18 @@ mod tests {
 
         assert_eq!(
             dt_date.add_duration(Duration::days(1)),
-            Some(DateTime::from(NaiveDate::from_ymd_opt(2023, 4, 6).unwrap()))
+            Some(DateTime::from(NaiveDate::from_ymd_opt(2023, 4, 6).unwrap()).to_value())
         );
         assert_eq!(
             dt_datetime.add_duration(Duration::days(1)),
-            Some(DateTime::from(Utc.with_ymd_and_hms(2023, 4, 6, 12, 34, 56)))
+            Some(DateTime::from(Utc.with_ymd_and_hms(2023, 4, 6, 12, 34, 56)).to_value())
         );
+    }
+
+    #[test]
+    fn test_value_string_behavior() {
+        let string = Value::from("hello");
+        let concat = string.concat("!");
+        assert!(concat == StringB::from("hello!").to_value())
     }
 }
