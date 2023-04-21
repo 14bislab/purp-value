@@ -1,5 +1,15 @@
 use crate::prelude::*;
 
+impl Value {
+    // fn clean(&mut self) {
+    //     match self {
+    //         Value::Object(obj) => obj.clean(),
+    //         Value::Array(arr) => arr.clean(),
+    //         _ => (),
+    //     }
+    // }
+}
+
 impl NumberBehavior for Value {
     fn set_u8(&mut self, value: u8) {
         match self {
@@ -401,14 +411,83 @@ impl NumberBehavior for Value {
     }
 }
 
+impl ObjectBehavior for Value {
+    fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        match self {
+            Value::Object(o) => o.insert(key, value),
+            _ => todo!(),
+        }
+    }
+
+    fn remove<T>(&mut self, key: &T) -> Option<Value>
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        match self {
+            Value::Object(o) => o.remove(key),
+            _ => todo!(),
+        }
+    }
+
+    fn contains_key<T>(&self, key: &T) -> bool
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        match self {
+            Value::Object(o) => o.contains_key(key),
+            _ => todo!(),
+        }
+    }
+
+    fn keys(&self) -> Vec<&ValueKey> {
+        match self {
+            Value::Object(o) => o.keys(),
+            _ => todo!(),
+        }
+    }
+
+    fn values(&self) -> Vec<&Value> {
+        match self {
+            Value::Object(o) => o.values(),
+            _ => todo!(),
+        }
+    }
+
+    fn len(&self) -> usize {
+        match self {
+            Value::Object(o) => o.len(),
+            _ => todo!(),
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        match self {
+            Value::Object(o) => o.is_empty(),
+            _ => todo!(),
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use crate::prelude::*;
 
     #[test]
-    fn test_number() {
+    fn test_value_number_behavior() {
         let value = Value::from(3.14);
         assert_eq!(value.get_f64_unsafe(), 3.14);
+    }
+    #[test]
+    fn test_value_object_behavior() {
+        // let mut value = Value::from(HashMap::from_iter(
+        //     vec![("1".to_string(), Value::from(3.14))].into_iter(),
+        // ));
+        // value.insert("2".to_string(), 4.13);
+        // assert_eq!(value, 3.14);
     }
 }

@@ -125,7 +125,7 @@ pub trait StringBehavior {
 }
 
 /// A custom string implementation with additional manipulation methods.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StringB {
     #[cfg(feature = "cstring")]
     pub value: CString,

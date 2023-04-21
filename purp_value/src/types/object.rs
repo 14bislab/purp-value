@@ -3,20 +3,23 @@ use std::collections::{BTreeMap, HashMap};
 use std::iter::Iterator;
 
 pub trait ObjectBehavior {
-    /// Returns a reference to the value associated with the specified key, or `None` if the key is not present.
-    fn get(&self, key: &str) -> Option<&Value>;
-
     /// Inserts a key-value pair into the object. If the key already exists, returns the previous value associated with the key.
-    fn insert(&mut self, key: String, value: Value) -> Option<Value>;
+    fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
+    where
+        T: Into<ValueKey> + Clone;
 
     /// Removes a key-value pair from the object and returns the associated value. If the key is not present, returns `None`.
-    fn remove(&mut self, key: &str) -> Option<Value>;
+    fn remove<T>(&mut self, key: &T) -> Option<Value>
+    where
+        T: Into<ValueKey> + Clone;
 
     /// Returns `true` if the object contains a value for the specified key, otherwise `false`.
-    fn contains_key(&self, key: &str) -> bool;
+    fn contains_key<T>(&self, key: &T) -> bool
+    where
+        T: Into<ValueKey> + Clone;
 
     /// Returns a `Vec` of references to the keys in the object, in the order they were inserted.
-    fn keys(&self) -> Vec<&String>;
+    fn keys(&self) -> Vec<&ValueKey>;
 
     /// Returns a `Vec` of references to the values in the object, in the order they were inserted.
     fn values(&self) -> Vec<&Value>;
@@ -26,48 +29,72 @@ pub trait ObjectBehavior {
 
     /// Returns `true` if the object contains no key-value pairs, otherwise `false`.
     fn is_empty(&self) -> bool;
-
-    /// Removes all key-value pairs from the object.
-    fn clear(&mut self);
 }
 
 /// An enum representing a JSON object as a `BTreeMap` or a `HashMap`.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Object {
-    BTreeMap(BTreeMap<String, Value>),
-    HashMap(HashMap<String, Value>),
+    BTreeMap(BTreeMap<ValueKey, Value>),
+    HashMap(HashMap<ValueKey, Value>),
 }
 
-impl ObjectBehavior for Object {
-    fn get(&self, key: &str) -> Option<&Value> {
+impl Object {
+    /// Returns a reference to the value associated with the specified key, or `None` if the key is not present.
+    pub fn get<T>(&self, key: &T) -> Option<&Value>
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        let value_key: ValueKey = key.clone().into();
         match self {
-            Object::BTreeMap(map) => map.get(key),
-            Object::HashMap(map) => map.get(key),
+            Object::BTreeMap(map) => map.get(&value_key),
+            Object::HashMap(map) => map.get(&value_key),
         }
     }
 
-    fn insert(&mut self, key: String, value: Value) -> Option<Value> {
+    /// Removes all key-value pairs from the object.
+    pub fn clear(&mut self) {
+        match self {
+            Object::BTreeMap(map) => map.clear(),
+            Object::HashMap(map) => map.clear(),
+        }
+    }
+}
+
+impl ObjectBehavior for Object {
+    fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        let key = key.into();
         match self {
             Object::BTreeMap(map) => map.insert(key, value),
             Object::HashMap(map) => map.insert(key, value),
         }
     }
 
-    fn remove(&mut self, key: &str) -> Option<Value> {
+    fn remove<T>(&mut self, key: &T) -> Option<Value>
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        let key: ValueKey = key.clone().into();
         match self {
-            Object::BTreeMap(map) => map.remove(key),
-            Object::HashMap(map) => map.remove(key),
+            Object::BTreeMap(map) => map.remove(&key),
+            Object::HashMap(map) => map.remove(&key),
         }
     }
 
-    fn contains_key(&self, key: &str) -> bool {
+    fn contains_key<T>(&self, key: &T) -> bool
+    where
+        T: Into<ValueKey> + Clone,
+    {
+        let key: ValueKey = key.clone().into();
         match self {
-            Object::BTreeMap(map) => map.contains_key(key),
-            Object::HashMap(map) => map.contains_key(key),
+            Object::BTreeMap(map) => map.contains_key(&key),
+            Object::HashMap(map) => map.contains_key(&key),
         }
     }
 
-    fn keys(&self) -> Vec<&String> {
+    fn keys(&self) -> Vec<&ValueKey> {
         match self {
             Object::BTreeMap(map) => map.keys().collect(),
             Object::HashMap(map) => map.keys().collect(),
@@ -94,13 +121,6 @@ impl ObjectBehavior for Object {
             Object::HashMap(map) => map.is_empty(),
         }
     }
-
-    fn clear(&mut self) {
-        match self {
-            Object::BTreeMap(map) => map.clear(),
-            Object::HashMap(map) => map.clear(),
-        }
-    }
 }
 
 impl Default for Object {
@@ -117,30 +137,70 @@ impl ToValueBehavior for Object {
     }
 }
 
-impl From<BTreeMap<String, Value>> for Object {
-    /// Converts BTreeMap<String, Value> into Object.
-    fn from(value: BTreeMap<String, Value>) -> Self {
+impl<T> From<BTreeMap<T, Value>> for Object
+where
+    T: Into<ValueKey> + Clone + ValueKeyBehavior,
+{
+    /// Converts BTreeMap<ValueKey, Value> into Object.
+    fn from(value: BTreeMap<T, Value>) -> Self {
+        Object::BTreeMap(
+            value
+                .iter()
+                .map(|(k, v)| (k.clone().into(), v.clone()))
+                .collect::<BTreeMap<ValueKey, Value>>(),
+        )
+    }
+}
+
+impl From<BTreeMap<ValueKey, Value>> for Object {
+    /// Converts HashMap<ValueKey, Value> into Object.
+    fn from(value: BTreeMap<ValueKey, Value>) -> Self {
         Object::BTreeMap(value)
     }
 }
 
-impl From<HashMap<String, Value>> for Object {
-    /// Converts HashMap<String, Value> into Object.
-    fn from(value: HashMap<String, Value>) -> Self {
+impl<T> From<HashMap<T, Value>> for Object
+where
+    T: Into<ValueKey> + Clone + ValueKeyBehavior,
+{
+    /// Converts BTreeMap<ValueKey, Value> into Object.
+    fn from(value: HashMap<T, Value>) -> Self {
+        Object::BTreeMap(
+            value
+                .iter()
+                .map(|(k, v)| (k.clone().into(), v.clone()))
+                .collect::<BTreeMap<ValueKey, Value>>(),
+        )
+    }
+}
+
+impl From<HashMap<ValueKey, Value>> for Object {
+    /// Converts HashMap<ValueKey, Value> into Object.
+    fn from(value: HashMap<ValueKey, Value>) -> Self {
         Object::HashMap(value)
     }
 }
 
-impl From<Vec<(String, Value)>> for Object {
+impl From<Vec<(ValueKey, Value)>> for Object {
     /// Converts a vector of key-value pairs into an Object.
-    fn from(value: Vec<(String, Value)>) -> Self {
+    fn from(value: Vec<(ValueKey, Value)>) -> Self {
         Object::HashMap(value.into_iter().collect())
     }
 }
 
-impl Into<HashMap<String, Value>> for Object {
-    /// Converts Object into HashMap<String, Value>.
-    fn into(self) -> HashMap<String, Value> {
+impl<T> From<Vec<(ValueKey, Value)>> for Object 
+where
+    T: Into<ValueKey> + Clone + ValueKeyBehavior,
+    {
+    /// Converts a vector of key-value pairs into an Object.
+    fn from(value: Vec<(ValueKey, Value)>) -> Self {
+        Object::HashMap(value.into_iter().collect())
+    }
+}
+
+impl Into<HashMap<ValueKey, Value>> for Object {
+    /// Converts Object into HashMap<ValueKey, Value>.
+    fn into(self) -> HashMap<ValueKey, Value> {
         match self {
             Object::BTreeMap(map) => map.into_iter().collect(),
             Object::HashMap(map) => map,
@@ -148,9 +208,9 @@ impl Into<HashMap<String, Value>> for Object {
     }
 }
 
-impl Into<BTreeMap<String, Value>> for Object {
-    /// Converts Object into BTreeMap<String, Value>.
-    fn into(self) -> BTreeMap<String, Value> {
+impl Into<BTreeMap<ValueKey, Value>> for Object {
+    /// Converts Object into BTreeMap<ValueKey, Value>.
+    fn into(self) -> BTreeMap<ValueKey, Value> {
         match self {
             Object::BTreeMap(map) => map,
             Object::HashMap(map) => map.into_iter().collect(),
@@ -166,12 +226,12 @@ pub struct ObjectIter<'a> {
 }
 
 enum IterState<'a> {
-    BTreeMap(std::collections::btree_map::Iter<'a, String, Value>),
-    HashMap(std::collections::hash_map::Iter<'a, String, Value>),
+    BTreeMap(std::collections::btree_map::Iter<'a, ValueKey, Value>),
+    HashMap(std::collections::hash_map::Iter<'a, ValueKey, Value>),
 }
 
 impl<'a> Iterator for ObjectIter<'a> {
-    type Item = (&'a String, &'a Value);
+    type Item = (&'a ValueKey, &'a Value);
 
     fn next(&mut self) -> Option<Self::Item> {
         match &mut self.state {
