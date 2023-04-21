@@ -3,11 +3,6 @@ use std::collections::{BTreeMap, HashMap};
 use std::iter::Iterator;
 
 pub trait ObjectBehavior {
-    /// Inserts a key-value pair into the object. If the key already exists, returns the previous value associated with the key.
-    fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
-    where
-        T: ValueKeyBehavior;
-
     /// Removes a key-value pair from the object and returns the associated value. If the key is not present, returns `None`.
     fn remove<T>(&mut self, key: &T) -> Option<Value>
     where
@@ -23,12 +18,6 @@ pub trait ObjectBehavior {
 
     /// Returns a `Vec` of references to the values in the object, in the order they were inserted.
     fn values(&self) -> Vec<&Value>;
-
-    /// Returns the number of key-value pairs in the object.
-    fn len(&self) -> usize;
-
-    /// Returns `true` if the object contains no key-value pairs, otherwise `false`.
-    fn is_empty(&self) -> bool;
 }
 
 /// An enum representing a JSON object as a `BTreeMap` or a `HashMap`.
@@ -69,10 +58,8 @@ impl Object {
             Object::HashMap(map) => map.clear(),
         }
     }
-}
 
-impl ObjectBehavior for Object {
-    fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
+    pub fn insert<T>(&mut self, key: T, value: Value) -> Option<Value>
     where
         T: ValueKeyBehavior,
     {
@@ -83,6 +70,22 @@ impl ObjectBehavior for Object {
         }
     }
 
+    pub fn len(&self) -> usize {
+        match self {
+            Object::BTreeMap(map) => map.len(),
+            Object::HashMap(map) => map.len(),
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            Object::BTreeMap(map) => map.is_empty(),
+            Object::HashMap(map) => map.is_empty(),
+        }
+    }
+}
+
+impl ObjectBehavior for Object {
     fn remove<T>(&mut self, key: &T) -> Option<Value>
     where
         T: ValueKeyBehavior,
@@ -116,20 +119,6 @@ impl ObjectBehavior for Object {
         match self {
             Object::BTreeMap(map) => map.values().collect(),
             Object::HashMap(map) => map.values().collect(),
-        }
-    }
-
-    fn len(&self) -> usize {
-        match self {
-            Object::BTreeMap(map) => map.len(),
-            Object::HashMap(map) => map.len(),
-        }
-    }
-
-    fn is_empty(&self) -> bool {
-        match self {
-            Object::BTreeMap(map) => map.is_empty(),
-            Object::HashMap(map) => map.is_empty(),
         }
     }
 }
@@ -297,7 +286,10 @@ mod tests {
 
         assert_eq!(
             results,
-            vec![("key1".to_value_key(), value1), ("key2".to_value_key(), value2)]
+            vec![
+                ("key1".to_value_key(), value1),
+                ("key2".to_value_key(), value2)
+            ]
         );
     }
 

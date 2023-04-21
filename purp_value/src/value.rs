@@ -18,7 +18,6 @@ use crate::prelude::*;
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Display, Formatter};
-use std::ops::Deref;
 
 /// Represents different data types as an enum.
 #[derive(Debug, Clone, PartialEq)]
