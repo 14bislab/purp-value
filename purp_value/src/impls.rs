@@ -7,6 +7,24 @@ impl Value {
     {
         match self {
             Value::Object(object) => object.get(key),
+            Value::Array(array) => {
+                let key = key.to_value_key();
+                array.get(key.to_usize())
+            }
+            _ => None,
+        }
+    }
+
+    pub fn get_mut<T>(&mut self, key: T) -> Option<&mut Value>
+    where
+        T: ValueKeyBehavior,
+    {
+        match self {
+            Value::Object(object) => object.get_mut(key),
+            Value::Array(array) => {
+                let key = key.to_value_key();
+                array.get_mut(key.to_usize())
+            }
             _ => None,
         }
     }

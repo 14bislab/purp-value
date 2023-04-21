@@ -69,12 +69,6 @@ pub trait ArrayBehavior {
     /// assert!(!array.is_empty());
     /// ```
     fn is_empty(&self) -> bool;
-
-    /// Returns a reference to the value at the specified index, or `None` if the index is out of bounds.
-    fn get(&self, index: usize) -> Option<&Value>;
-
-    /// Returns a mutable reference to the value at the specified index, or `None` if the index is out of bounds.
-    fn get_mut(&mut self, index: usize) -> Option<&mut Value>;
 }
 
 /// Represents an array of `Value`s.
@@ -96,6 +90,16 @@ impl Array {
     /// ```
     pub fn new() -> Self {
         Self { values: vec![] }
+    }
+
+    /// Returns a reference to the value at the specified index, or `None` if the index is out of bounds.
+    pub fn get(&self, index: usize) -> Option<&Value> {
+        self.values.get(index)
+    }
+
+    /// Returns a mutable reference to the value at the specified index, or `None` if the index is out of bounds.
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut Value> {
+        self.values.get_mut(index)
     }
 }
 
@@ -120,14 +124,6 @@ impl ArrayBehavior for Array {
 
     fn is_empty(&self) -> bool {
         self.values.is_empty()
-    }
-
-    fn get(&self, index: usize) -> Option<&Value> {
-        self.values.get(index)
-    }
-
-    fn get_mut(&mut self, index: usize) -> Option<&mut Value> {
-        self.values.get_mut(index)
     }
 }
 
