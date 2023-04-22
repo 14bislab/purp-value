@@ -123,17 +123,11 @@ impl ObjectBehavior for Object {
     }
 }
 
+
 impl Default for Object {
     /// Creates a new `Object` with an empty `HashMap`.
     fn default() -> Self {
         Object::HashMap(HashMap::new())
-    }
-}
-
-impl ToValueBehavior for Object {
-    /// Converts Object into a Value enum.
-    fn to_value(&self) -> Value {
-        Value::Object(self.clone())
     }
 }
 

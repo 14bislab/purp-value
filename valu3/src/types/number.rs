@@ -272,12 +272,6 @@ impl Number {
     }
 }
 
-impl ToValueBehavior for Number {
-    fn to_value(&self) -> Value {
-        Value::Number(self.clone())
-    }
-}
-
 // Implementations of methods for setting and getting number values safely and unsafely,
 // as well as checking their properties and identifying the number type.
 impl NumberBehavior for Number {

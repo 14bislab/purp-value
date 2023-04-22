@@ -86,11 +86,6 @@ impl Array {
     }
 }
 
-impl ToValueBehavior for Array {
-    fn to_value(&self) -> Value {
-        Value::Array(self.clone())
-    }
-}
 
 impl ArrayBehavior for Array {
     fn pop(&mut self) -> Option<Value> {

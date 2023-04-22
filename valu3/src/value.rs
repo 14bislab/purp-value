@@ -15,8 +15,6 @@
 //! let mut datetime_value = Value::DateTime(DateTime::from("2023-04-05T00:00:00Z"));
 //! ```
 use crate::prelude::*;
-
-use std::collections::{BTreeMap, HashMap};
 use std::fmt::{Display, Formatter};
 
 /// Represents different data types as an enum.
@@ -39,135 +37,6 @@ impl Default for Value {
 }
 
 impl ValueTrait for Value {}
-
-impl ToValueBehavior for u8 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for u16 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for u32 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for u64 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for i8 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for i16 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for i32 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for i64 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for f32 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for f64 {
-    fn to_value(&self) -> Value {
-        Value::Number(Number::from(*self))
-    }
-}
-
-impl ToValueBehavior for String {
-    fn to_value(&self) -> Value {
-        Value::String(StringB::new(self.clone()))
-    }
-}
-
-impl ToValueBehavior for &str {
-    fn to_value(&self) -> Value {
-        Value::String(StringB::new(self.to_string()))
-    }
-}
-
-impl ToValueBehavior for bool {
-    fn to_value(&self) -> Value {
-        Value::Boolean(*self)
-    }
-}
-
-impl<T> ToValueBehavior for BTreeMap<String, T>
-where
-    T: ToValueBehavior,
-{
-    fn to_value(&self) -> Value {
-        let mut object = Object::default();
-        for (key, value) in self {
-            object.insert(key.to_string(), value.to_value());
-        }
-        Value::Object(object)
-    }
-}
-
-impl<T> ToValueBehavior for HashMap<String, T>
-where
-    T: ToValueBehavior,
-{
-    fn to_value(&self) -> Value {
-        let mut object = Object::default();
-        for (key, value) in self {
-            object.insert(key.to_string(), value.to_value());
-        }
-        Value::Object(object)
-    }
-}
-
-impl<T> ToValueBehavior for Vec<T>
-where
-    T: ToValueBehavior,
-{
-    fn to_value(&self) -> Value {
-        let mut array = Array::new();
-        for value in self {
-            array.push(value.to_value());
-        }
-        Value::Array(array)
-    }
-}
-
-impl<T> ToValueBehavior for Option<T>
-where
-    T: ToValueBehavior,
-{
-    fn to_value(&self) -> Value {
-        match self {
-            Some(value) => value.to_value(),
-            None => Value::Null,
-        }
-    }
-}
 
 impl Display for Value {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -196,27 +65,6 @@ where
 {
     fn from(value: T) -> Self {
         value.to_value()
-    }
-}
-
-impl<T> ToValueBehavior for HashMap<T, Value>
-where
-    T: ValueKeyBehavior,
-{
-    fn to_value(&self) -> Value {
-        Object::from(self.clone()).to_value()
-    }
-}
-
-impl ToValueBehavior for BTreeMap<String, Value> {
-    fn to_value(&self) -> Value {
-        Object::from(self.clone()).to_value()
-    }
-}
-
-impl ToValueBehavior for Vec<Value> {
-    fn to_value(&self) -> Value {
-        Array::from(self.clone()).to_value()
     }
 }
 

@@ -56,12 +56,6 @@ pub enum DateTime {
     DateTime(ChDateTime<chrono::Utc>),
 }
 
-impl ToValueBehavior for DateTime {
-    fn to_value(&self) -> Value {
-        Value::DateTime(self.clone())
-    }
-}
-
 // Implementations of From trait to allow conversion from NaiveDate, NaiveTime, and ChDateTime<Utc>
 impl From<NaiveDate> for DateTime {
     fn from(value: NaiveDate) -> Self {

@@ -1,31 +1,31 @@
-# :sparkles: Valu3 :sparkles
+# :sparkles: Valu3 :sparkles:
 
 The Valu3 provides a flexible and powerful way to manipulate different types of data in your Rust projects. Whether you need to work with numbers, strings, arrays, objects, or datetime values, the Valu3 has you covered.
 
-## Features
+## Features :carousel_horse:
 
 - Easy-to-use API for manipulating values
 - Consistent API for different types of data
-- Provides classic methods for numerical and string manipulation
+- Provides classic methods for numerical, string, object, array and datetime manipulation
 - Supports conversion to and from various data formats (e.g., JSON, YAML, and XML)
 - Integration with Serde for easy serialization and deserialization
-- Native parse and conversion with Pest for data validation
+- Native parsing and conversion to struct's with Pest for data validation
 
-## Examples
+## Examples :space_invader:
 
 Here are some examples of how to use the Valu3:
 
 ```rust,editable
 use value::{Array, DateTime, Number, Object, StringB, Value};
 
-let string_value = Value::String(StringB::new("hello".to_string()));
-let number_value = Value::Number(Number::from(42));
-let boolean_value = Value::Boolean(true);
+let string_value = "hello".to_value();
+let number_value = 42.to_value();
+let boolean_value = Value::from(true);
 let null_value = Value::Null;
 let undefined_value = Value::Undefined;
-let mut datetime_value = Value::DateTime(DateTime::from("2023-04-05T00:00:00Z"));
+let mut datetime_value = DateTime::from("2023-04-05T00:00:00Z").to_value();
 
-string_value.to_string();
+string_value.as_string();
 number_value.get_i32();
 assert_eq!(boolean_value, true);
 assert_eq!(null_value, Value::Null);

@@ -8,8 +8,6 @@ use std::ffi::CString;
 use std::fmt::{Display, Formatter};
 use std::ops::Deref;
 
-use crate::traits::ToValueBehavior;
-
 pub trait StringBehavior {
     /// Gets the byte representation of the string.
     ///
@@ -111,12 +109,6 @@ pub struct StringB {
     pub value: CString,
     #[cfg(not(feature = "cstring"))]
     pub value: String,
-}
-
-impl ToValueBehavior for StringB {
-    fn to_value(&self) -> crate::value::Value {
-        crate::value::Value::String(StringB::from(self.clone()))
-    }
 }
 
 impl StringB {
